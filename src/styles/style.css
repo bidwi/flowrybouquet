@@ -47,9 +47,19 @@ body {
 
 .app-bar .app-bar__brand h1 {
   color: #db0000;
-  text-transform: uppercase;
+  text-decoration: none;
   font-size: 22px;
   user-select: none;
+}
+
+.judul {
+  text-decoration: none;
+  font-family: 'Playwrite GB S', cursive;
+  color: red;
+}
+
+.judul:active {
+  text-decoration: none;
 }
 
 .app-bar .app-bar__navigation {
@@ -71,6 +81,7 @@ body {
   display: inline-block;
   text-decoration: none;
   color: black;
+  font-weight: bolder;
   padding: 8px;
   margin-bottom: 5px;
   width: 100%;
