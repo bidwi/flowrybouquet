@@ -1,6 +1,11 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 const path = require('path');
+
+require('dotenv').config({
+  path: path.resolve('.env'),
+});
 
 module.exports = {
   entry: {
@@ -38,6 +43,11 @@ module.exports = {
           to: path.resolve(__dirname, 'dist/'),
         },
       ],
+    }),
+    new webpack.DefinePlugin({
+      'process.env.VITE_WHATSAPP_PHONE_NUMBER': JSON.stringify(
+        process.env.VITE_WHATSAPP_PHONE_NUMBER
+      ),
     }),
   ],
 };

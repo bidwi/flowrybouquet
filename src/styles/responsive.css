@@ -23,7 +23,7 @@
 
   .app-bar .app-bar__navigation ul li a {
     display: inline-block;
-    width: 65px;
+    /* width: 65px; */
     text-align: center;
     margin: 0;
   }
@@ -59,6 +59,24 @@
   }
 }
 
+@media screen and (max-width: 850px) {
+  .sort-card {
+    display: block;
+  }
+
+  .card-wishlist {
+    margin-bottom: 20px;
+  }
+}
+
+@media screen and (max-width: 1035px) {
+  .judul-landing-page {
+    background-color: transparent;
+    color: white;
+    font-size: 40px;
+  }
+}
+
 @media screen and (min-width: 1200px) {
   .movies {
     grid-template-columns: repeat(4, 1fr);
@@ -68,5 +86,26 @@
 @media screen and (min-width: 1600px) {
   .movies {
     grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .card-faq {
+    max-width: 100%; /* full-width pada perangkat kecil */
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .detail-content {
+    flex-direction: column; /* Ubah layout menjadi kolom */
+    align-items: center; /* Selaraskan elemen ke tengah */
+  }
+
+  .detail-image {
+    margin-bottom: 16px; /* Tambahkan jarak antara gambar dan teks */
+  }
+  .modal {
+    margin-top: 20px;
   }
 }

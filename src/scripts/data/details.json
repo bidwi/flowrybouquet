@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Bouquet Snack",
+    "variant": "Stik Wafer",
+    "description": "Nikmati sensasi menyantap stik wafer berkualitas yang dipilih khusus untuk menjadi isi dalam bouquet snack ini. Bouquet ini cocok untuk berbagai acara, mulai dari perayaan kecil hingga pesta besar, memberikan sentuhan manis dengan tekstur wafer yang renyah dan lezat.",
+    "price": "Rp150.000",
+    "image": "/bouquet/chocolatos.jpg"
+  },
+  {
+    "name": "Bouquet Bunga",
+    "variant": "Black & White",
+    "description": "Bouquet bunga dengan warna hitam dan putih ini menawarkan kombinasi elegan yang sempurna. Dengan pemilihan bunga yang anggun, bouquet ini memberikan nuansa yang elegan dan serasi untuk berbagai kesempatan, mulai dari acara formal hingga acara spesial lainnya.",
+    "price": "Rp100.000",
+    "image": "/bouquet/bunga.jpg"
+  },
+  {
+    "name": "Bouquet Coklat",
+    "variant": "Purple",
+    "description": "Bouquet coklat dengan tema warna ungu ini memberikan kesan yang manis dan menawan. Setiap coklat yang terkandung di dalamnya dipilih dengan teliti untuk memberikan rasa yang luar biasa, cocok untuk dijadikan hadiah istimewa bagi orang yang kamu sayangi.",
+    "price": "Rp50.000",
+    "image": "/bouquet/coklat.jpg"
+  },
+  {
+    "name": "Bouquet Boneka",
+    "variant": "Teddy Bear",
+    "description": "Bouquet yang unik ini menggabungkan boneka teddy bear lucu dengan bunga yang indah, menciptakan hadiah yang sempurna untuk pasangan atau wisudawan. Keistimewaan bouquet ini adalah kombinasi antara kelembutan boneka dan keindahan bunga yang menyentuh hati penerimanya.",
+    "price": "Rp100.000",
+    "image": "/bouquet/boneka.jpg"
+  },
+  {
+    "name": "Bouquet Bunga",
+    "variant": "Mawar",
+    "description": "Bouquet bunga mawar ini menyuguhkan keindahan dan kesan romantis dengan pilihan mawar yang segar dan cantik. Dengan tampilan warna-warna lembut, bouquet ini cocok untuk diberikan pada berbagai acara, seperti perayaan ulang tahun, hari valentine, atau sebagai tanda kasih sayang.",
+    "price": "Rp15.000",
+    "image": "/bouquet/mawar.jpg"
+  },
+  {
+    "name": "Bouquet Kemasan",
+    "variant": "Susu Coklat Saset",
+    "description": "Dengan kombinasi susu coklat saset dalam bouquet ini, kamu bisa memberikan kejutan yang menyenangkan bagi orang tersayang. Bouquet ini dipenuhi dengan kemasan saset susu coklat yang bisa dinikmati kapan saja, memberikan sentuhan manis di setiap kesempatan.",
+    "price": "Rp120.000",
+    "image": "/bouquet/milo.jpg"
+  },
+  {
+    "name": "Bouquet Polaroid",
+    "variant": "Polaroid & Bunga",
+    "description": "Bouquet ini menggabungkan keindahan bunga dengan kenangan manis dalam bentuk polaroid. Setiap polaroid yang disertakan memberikan kesan pribadi, menjadikannya pilihan tepat untuk memberi hadiah yang penuh makna dan kenangan tak terlupakan.",
+    "price": "Rp100.000",
+    "image": "/bouquet/polaroid.jpg"
+  },
+  {
+    "name": "Bouquet Uang",
+    "variant": "Uang Lima Ribu",
+    "description": "Bouquet ini mengandung uang pecahan Rp5.000 yang disusun dengan cermat, memberikan hadiah yang praktis namun tetap berkesan. Cocok untuk berbagai acara, bouquet uang ini akan memberi kebahagiaan dan manfaat langsung bagi penerimanya.",
+    "price": "Rp100.000",
+    "image": "/bouquet/uang.jpg"
+  }
+]

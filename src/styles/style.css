@@ -1,6 +1,7 @@
 * {
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
 }
 
 body {
@@ -9,6 +10,217 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+#mainContent {
+  background-color: hsla(44, 100%, 90%, 0.3);
+  padding: 32px;
+  flex: 1;
+}
+
+.nav-page {
+  color: rgb(216, 0, 0);
+}
+
+/* Hero */
+
+.judul-landing-page {
+  padding: 0 15px;
+  color: rgb(216, 0, 0);
+  background-color: #ffffff;
+  font-size: 50px;
+}
+
+.deskripsi-landing-page {
+  color: white;
+  /* background-color: #ffffff; */
+  font-weight: bolder;
+}
+
+.hero-image {
+  position: relative;
+  width: 100%;
+  height: 65vh; /* Full screen height */
+  background-image: url('../../src/public/bouquet/uang.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin-bottom: 60px;
+  border-radius: 30px;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.373); /* Dark overlay with 50% opacity */
+  z-index: 1; /* Ensure the overlay is above the image */
+}
+
+.hero-text {
+  position: relative;
+  text-align: center;
+  color: white;
+  z-index: 2; /* Ensure the text is above the overlay */
+}
+
+.hero-text p {
+  margin-top: 12px;
+  margin-left: 20px;
+  margin-right: 20px;
+  font-size: 20px;
+}
+
+.buket-kami {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 40px;
+  color: rgb(216, 0, 0);
+}
+
+/* Card */
+.card-wishlist {
+  position: relative;
+  box-shadow: -8px 8px rgb(55, 216, 55);
+  transition: 0.3s;
+  width: 90%;
+  max-width: 250px;
+  display: flex;
+  border-radius: 12px;
+  border: 6px solid rgba(255, 27, 27, 0.782);
+  margin: 0 auto;
+}
+
+/* Tambahkan gaya untuk container di halaman wishlist */
+.wishlist-container,
+.sort-card {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Atur ulang margin bottom untuk card saat di dalam halaman wishlist */
+.wishlist-container .card-wishlist {
+  margin-bottom: 20px;
+}
+
+@media screen and (max-width: 850px) {
+  .sort-card,
+  .wishlist-container {
+    display: block;
+  }
+
+  .card-wishlist {
+    margin-bottom: 20px;
+  }
+}
+
+@media screen and (max-width: 1035px) {
+  .judul-landing-page {
+    background-color: transparent;
+    color: white;
+    font-size: 40px;
+  }
+}
+
+.image-card {
+  width: 100%;
+  height: auto;
+  border-radius: 5px 5px 0 0;
+}
+
+.card-wishlist:hover {
+  box-shadow: -12px 12px rgba(255, 27, 27, 0.782);
+  cursor: pointer;
+}
+
+.button-card {
+  padding: 6px;
+  margin-top: 7px;
+  border-radius: 8px;
+  background-color: aliceblue;
+  box-shadow: -3.5px 3.5px red;
+  color: red;
+  font-weight: bolder;
+  font-size: 20px;
+}
+
+.container {
+  padding: 10px 16px;
+  border-radius: 0 0 10px 10px;
+}
+
+.card-landing-page {
+  margin-top: 30px;
+}
+
+/* Overlay dengan pseudo-element yang muncul saat di-hover */
+/* Teks overlay default untuk landing page */
+/* Teks overlay default untuk landing page */
+/* Teks default untuk tambah ke wishlist */
+.card-wishlist::after {
+  content: 'Lihat selengkapnya';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(128, 128, 128, 0.8);
+  color: white;
+  font-size: 1.2em;
+  font-weight: bold;
+  border-radius: 12px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+/* Tampilkan overlay saat hover */
+.card-wishlist:hover::after {
+  opacity: 1;
+}
+
+/* Teks overlay saat di halaman Wishlist */
+.is-wishlist-page .card-wishlist::after {
+  content: 'Lihat Selengkapnya';
+}
+
+.judul-buket {
+  font-size: 25px;
+}
+
+.varian-buket {
+  font-size: 18px;
+}
+
+/* Wishlist */
+.wishlist-judul {
+  text-align: center;
+  margin-bottom: 15px;
+  font-weight: bolder;
+  font-size: 30px;
+  color: rgb(216, 0, 0);
+}
+
+.empty-wishlist-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: rgb(216, 0, 0);
+  font-size: 1.2em;
+  height: 100%; /* Agar teks berada di tengah secara vertikal */
 }
 
 /*
@@ -80,7 +292,7 @@ body {
 .app-bar .app-bar__navigation ul li a {
   display: inline-block;
   text-decoration: none;
-  color: black;
+  color: rgb(219, 0, 0);
   font-weight: bolder;
   padding: 8px;
   margin-bottom: 5px;
@@ -92,8 +304,6 @@ body {
   */
 
 main {
-  padding: 32px;
-  flex: 1;
 }
 
 .content {
@@ -103,6 +313,51 @@ main {
 
 .content .content__heading {
   font-weight: normal;
+}
+
+/* FAQ */
+
+.faq-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-top: 20px;
+  padding: 0 16px; /* memberikan padding agar tidak terlalu mepet di layar kecil */
+}
+
+.card-faq {
+  position: relative;
+  box-shadow: -8px 8px rgb(55, 216, 55);
+  transition: 0.3s;
+  width: 100%;
+  max-width: 800px; /* batas lebar pada perangkat besar */
+  padding: 16px;
+  border-radius: 12px;
+  border: 6px solid rgba(255, 27, 27, 0.782);
+  background-color: #fff;
+  text-align: center;
+}
+
+.card-faq h3 {
+  margin: 0;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.card-faq p {
+  margin: 10px 0 0;
+  font-size: 1em;
+  color: #666;
+}
+
+.faq-deskripsi {
+  font-weight: bolder;
+}
+
+.faq-judul {
+  text-align: center;
+  color: rgb(216, 0, 0);
 }
 
 /*
@@ -195,6 +450,177 @@ main {
   margin: 8px 0;
 }
 
+.detail-content {
+  display: flex; /* Mengatur layout menjadi flexbox */
+  align-items: flex-start; /* Menyelaraskan item ke atas */
+  justify-content: center; /* Menjaga elemen tetap di tengah secara horizontal */
+  padding: 20px;
+  gap: 20px; /* Memberikan jarak antar elemen */
+}
+
+.detail-image {
+  width: 100%;
+  max-width: 300px; /* Atur ukuran maksimum untuk gambar */
+  border-radius: 12px;
+}
+
+.detail-info {
+  display: flex;
+  flex-direction: column; /* Mengatur elemen dalam kolom */
+  justify-content: center; /* Menyelaraskan konten di tengah */
+  max-width: 500px; /* Batas lebar untuk menjaga teks */
+}
+
+.detail-info h1,
+.detail-info h2,
+.detail-info h3 {
+  margin: 0 0 10px;
+}
+
+.detail-info p {
+  text-align: left; /* Menyelaraskan teks ke kiri */
+  margin-bottom: 20px;
+}
+
+.detail-info p {
+  margin: 16px 0;
+  line-height: 1.6;
+}
+
+/* Buttons Styling */
+.detail-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.wishlist-button,
+.buy-whatsapp,
+.buy-instagram {
+  padding: 10px 16px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+}
+
+.wishlist-button {
+  background-color: #007bff; /* Biru untuk Wishlist */
+}
+
+.wishlist-button:hover {
+  background-color: #0056b3; /* Biru lebih gelap */
+}
+
+.buy-whatsapp {
+  background-color: #25d366; /* Hijau khas WhatsApp */
+}
+
+.buy-whatsapp:hover {
+  background-color: #1ebe57; /* Hijau lebih gelap */
+}
+
+.buy-instagram {
+  background-color: #c13584; /* Ungu khas Instagram */
+}
+
+.buy-instagram:hover {
+  background-color: #a2296f; /* Ungu lebih gelap */
+}
+
+.wishlist-button {
+  padding: 10px 16px;
+  font-size: 16px;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.wishlist-button:hover {
+  background-color: darkred;
+}
+
+/* Modal Styles */
+.modal {
+  display: none; /* Secara default modal disembunyikan */
+  position: fixed;
+  z-index: 1; /* Pastikan modal muncul di atas konten */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* Latar belakang transparan */
+}
+
+/* Modal Styles */
+.modal {
+  display: none; /* Secara default modal disembunyikan */
+  position: fixed;
+  z-index: 1; /* Pastikan modal muncul di atas konten */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* Latar belakang transparan */
+}
+
+/* Konten Modal */
+.modal-content {
+  background-color: white;
+  margin: 15% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* Tombol tutup */
+.close {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  top: 0;
+  right: 10px;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Tombol dalam modal */
+.modal-button {
+  background-color: blue;
+  color: white;
+  border: none;
+  padding: 15px 32px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  margin: 10px;
+  font-weight: bolder;
+}
+
+.modal-button:hover {
+  background-color: rgb(80, 80, 255);
+}
+
+#delete-item {
+  background-color: red;
+}
+
+#delete-item:hover {
+  background-color: #ff5d5d;
+}
+
 /*
     Footer
   */
@@ -202,13 +628,28 @@ main {
 footer {
   padding: 16px;
 }
+.footer-desc {
+  text-align: center;
+  margin: 10px 0;
+  font-size: 14px;
+  color: #858585;
+}
 
 footer p {
   text-align: center;
-  color: #aaaaaa;
+  margin: 10px 0;
+  font-size: 14px;
+  color: #858585;
 }
 
 footer p a {
   color: #db0000;
   text-decoration: none;
+  margin: 0 5px;
+  font-weight: bold;
+}
+
+footer p a:hover {
+  color: #555555;
+  text-decoration: underline;
 }

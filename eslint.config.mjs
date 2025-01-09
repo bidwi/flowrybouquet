@@ -9,6 +9,7 @@ export default [
   {
     rules: {
       'no-undef': 'off',
+      'prefer-const': 'off',
     },
   },
 ];
