@@ -84,6 +84,60 @@ body {
   color: rgb(216, 0, 0);
 }
 
+/* Video Landing Page */
+.video-section {
+  display: flex;
+  justify-content: center;
+  margin: 110px 0;
+  margin-bottom: 50px;
+  padding: 0 12px;
+}
+
+.video-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  max-width: 1200px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.video-text {
+  flex: 1;
+  font-size: 32px;
+  font-weight: bold;
+  line-height: 1.2;
+  color: #d80000;
+}
+
+.video-text p {
+  font-weight: lighter;
+  font-size: 24px;
+  padding-top: 14px;
+}
+
+.video-frame {
+  flex: 1;
+  aspect-ratio: 16 / 9;
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.video-frame video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 /* Card */
 .card-wishlist {
   position: relative;
