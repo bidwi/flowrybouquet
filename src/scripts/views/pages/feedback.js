@@ -31,8 +31,7 @@ const FeedbackPage = {
               <th>Aksi</th>
             </tr>
           </thead>
-          <tbody id="feedback-table-body">
-          </tbody>
+          <tbody id="feedback-table-body"></tbody>
         </table>
 
         <button id="logout-btn" style="margin-top: 1.5rem; padding: 0.5rem 1rem; background-color: #ff4d4d; color: white; border: none; cursor: pointer;">
@@ -45,7 +44,6 @@ const FeedbackPage = {
             <h3 id="modal-title">Tambah Data Buket</h3>
             <form id="form-tambah">
               <input type="hidden" id="edit-id">
-
               <label>Nama Buket:</label><br>
               <input type="text" id="flower" required style="width:100%"><br><br>
 
@@ -76,12 +74,6 @@ const FeedbackPage = {
     } = await supabase.auth.getSession();
     if (!session) return;
 
-    const logoutBtn = document.getElementById('logout-btn');
-    logoutBtn?.addEventListener('click', async () => {
-      await supabase.auth.signOut();
-      window.location.hash = '#/login';
-    });
-
     const modal = document.getElementById('modal');
     const tambahBtn = document.getElementById('tambah-btn');
     const closeModal = document.getElementById('close-modal');
@@ -96,6 +88,8 @@ const FeedbackPage = {
     const editIdInput = document.getElementById('edit-id');
 
     const openModal = (editData = null) => {
+      form.reset();
+      gambarInput.value = ''; // reset file input secara manual
       if (editData) {
         modalTitle.innerText = 'Edit Data Buket';
         flowerInput.value = editData.flower;
@@ -105,7 +99,6 @@ const FeedbackPage = {
         editIdInput.value = editData.id;
       } else {
         modalTitle.innerText = 'Tambah Data Buket';
-        form.reset();
         editIdInput.value = '';
       }
       modal.style.display = 'block';
@@ -124,12 +117,13 @@ const FeedbackPage = {
       const gambarFile = gambarInput.files[0];
       const editId = editIdInput.value;
 
-      let fileName = flower.replace(/\s+/g, '-').toLowerCase();
+      let photo_url = null;
 
       if (gambarFile) {
+        const fileName = `${Date.now()}-${flower.replace(/\s+/g, '-')}`;
         const { error: uploadError } = await supabase.storage
           .from('photo')
-          .upload(`${fileName}`, gambarFile, {
+          .upload(fileName, gambarFile, {
             cacheControl: '3600',
             upsert: true,
           });
@@ -138,32 +132,28 @@ const FeedbackPage = {
           alert('Gagal mengupload gambar: ' + uploadError.message);
           return;
         }
+
+        photo_url = `https://agrkvdjeigkdgdjapvuo.supabase.co/storage/v1/object/photo/${fileName}`;
       }
 
       if (editId) {
-        // Update data
-        const { error: updateError } = await supabase
-          .from('flowry')
-          .update({ flower, varian, harga, deskripsi })
-          .eq('id', editId);
+        const updateData = { flower, varian, harga, deskripsi };
+        if (photo_url) updateData.photo_url = photo_url;
 
-        if (updateError) {
-          alert('Gagal mengedit data: ' + updateError.message);
+        const { error } = await supabase
+          .from('flowry')
+          .update(updateData)
+          .eq('id', editId);
+        if (error) {
+          alert('Gagal mengedit data: ' + error.message);
           return;
         }
       } else {
-        // Insert data
-        const { error: insertError } = await supabase.from('flowry').insert([
-          {
-            flower,
-            varian,
-            harga,
-            deskripsi,
-          },
-        ]);
-
-        if (insertError) {
-          alert('Gagal menyimpan data buket: ' + insertError.message);
+        const { error } = await supabase
+          .from('flowry')
+          .insert([{ flower, varian, harga, deskripsi, photo_url }]);
+        if (error) {
+          alert('Gagal menyimpan data: ' + error.message);
           return;
         }
       }
@@ -172,7 +162,13 @@ const FeedbackPage = {
       window.location.reload();
     });
 
-    // Ambil dan tampilkan data
+    document
+      .getElementById('logout-btn')
+      ?.addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        window.location.hash = '#/login';
+      });
+
     const { data: feedbacks, error } = await supabase
       .from('flowry')
       .select('*');
@@ -185,29 +181,28 @@ const FeedbackPage = {
       tableBody.innerHTML = feedbacks
         .map(
           (item) => `
-          <tr>
-            <td>${item.id}</td>
-            <td>${item.flower}</td>
-            <td>
-              <img src="https://agrkvdjeigkdgdjapvuo.supabase.co/storage/v1/object/photo/${item.flower
-                .replace(/\s+/g, '-')
-                .toLowerCase()}" alt="${
-            item.flower
-          }" style="max-width:80px; max-height:80px;" />
-            </td>
-            <td>${item.varian}</td>
-            <td>${item.harga}</td>
-            <td>${item.deskripsi}</td>
-            <td>
-              <button class="edit-btn" data-id="${item.id}">Edit</button>
-              <button class="delete-btn" data-id="${item.id}">Hapus</button>
-            </td>
-          </tr>
-        `
+        <tr>
+          <td>${item.id}</td>
+          <td>${item.flower}</td>
+          <td>
+            ${
+              item.photo_url
+                ? `<img src="${item.photo_url}" style="max-width:80px; max-height:80px;" alt="${item.flower}" />`
+                : 'Tidak ada gambar'
+            }
+          </td>
+          <td>${item.varian}</td>
+          <td>${item.harga}</td>
+          <td>${item.deskripsi}</td>
+          <td>
+            <button class="edit-btn" data-id="${item.id}">Edit</button>
+            <button class="delete-btn" data-id="${item.id}">Hapus</button>
+          </td>
+        </tr>
+      `
         )
         .join('');
 
-      // Tambahkan event listener untuk tombol Edit
       document.querySelectorAll('.edit-btn').forEach((btn) => {
         btn.addEventListener('click', async (e) => {
           const id = e.target.dataset.id;
@@ -220,30 +215,18 @@ const FeedbackPage = {
         });
       });
 
-      // Tambahkan event listener untuk tombol Hapus
       document.querySelectorAll('.delete-btn').forEach((btn) => {
         btn.addEventListener('click', async (e) => {
           const id = e.target.dataset.id;
-
-          if (!id) {
-            alert('ID tidak ditemukan!');
-            return;
-          }
-
           const confirmDelete = confirm(
             `Yakin ingin menghapus data dengan ID: ${id}?`
           );
           if (!confirmDelete) return;
 
-          const { data, error } = await supabase
-            .from('flowry')
-            .delete()
-            .eq('id', id);
-
+          const { error } = await supabase.from('flowry').delete().eq('id', id);
           if (error) {
             alert('Gagal menghapus: ' + error.message);
           } else {
-            alert('Data berhasil dihapus');
             window.location.reload();
           }
         });
