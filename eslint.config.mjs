@@ -9,7 +9,9 @@ export default [
   {
     rules: {
       'no-undef': 'off',
+      quotes: 'off',
       'prefer-const': 'off',
+      'prefer-template': 'off',
     },
   },
 ];
