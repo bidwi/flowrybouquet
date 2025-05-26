@@ -48,6 +48,8 @@ module.exports = {
       'process.env.VITE_WHATSAPP_PHONE_NUMBER': JSON.stringify(
         process.env.VITE_WHATSAPP_PHONE_NUMBER
       ),
+      'process.env.API_KEY': JSON.stringify(process.env.API_KEY),
+      'process.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL),
     }),
   ],
 };

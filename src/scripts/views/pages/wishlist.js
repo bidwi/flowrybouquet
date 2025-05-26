@@ -1,5 +1,16 @@
+import supabase from '../../globals/supabaseClient';
+
 const Wishlist = {
   async render() {
+    // Cek apakah user login
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      window.location.hash = '#/login';
+      return '<p style="text-align:center;">Silakan login terlebih dahulu untuk mengakses wishlist.</p>';
+    }
     document.body.classList.add('wishlist-page', 'is-wishlist-page');
     return `
       <h1 class="wishlist-judul">Wishlist Kamu</h1>
@@ -20,6 +31,11 @@ const Wishlist = {
   },
 
   async afterRender() {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) return;
+
     const wishlistContainer = document.getElementById('wishlist-container');
     const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
     const modal = document.getElementById('confirmation-modal');

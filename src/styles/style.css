@@ -675,6 +675,129 @@ main {
   background-color: #ff5d5d;
 }
 
+/* login */
+
+.login-container {
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 30px;
+  background-color: #f7f7f7;
+  border-radius: 16px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-title {
+  text-align: center;
+  color: #4d869c;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-label {
+  color: #4d869c;
+  font-weight: bold;
+  margin-bottom: 6px;
+  margin-top: 10px;
+}
+
+.login-input {
+  padding: 10px;
+  border: 1.4px solid #ccc;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.login-button {
+  background-color: #4d869c;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.login-button:hover {
+  background-color: #3c6e83;
+}
+
+.login-redirect {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.login-redirect a {
+  color: #00008b;
+  text-decoration: underline;
+}
+
+/* registrasi */
+.register-container {
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 30px;
+  background-color: #f7f7f7;
+  border-radius: 16px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.register-title {
+  text-align: center;
+  color: #4d869c;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.register-label {
+  color: #4d869c;
+  font-weight: bold;
+  margin-bottom: 6px;
+  margin-top: 10px;
+}
+
+.register-input {
+  padding: 10px;
+  border: 1.4px solid #ccc;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.register-button {
+  background-color: #4d869c;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.register-button:hover {
+  background-color: #3c6e83;
+}
+
+.register-redirect {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.register-redirect a {
+  color: #00008b;
+  text-decoration: underline;
+}
+
 /*
     Footer
   */
