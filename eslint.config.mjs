@@ -8,8 +8,9 @@ export default [
   daStyle,
   {
     rules: {
-      'no-undef': 'off',
       quotes: 'off',
+      indent: 'off',
+      'no-undef': 'off',
       'prefer-const': 'off',
       'prefer-template': 'off',
     },

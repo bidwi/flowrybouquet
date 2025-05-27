@@ -830,3 +830,127 @@ footer p a:hover {
   color: #555555;
   text-decoration: underline;
 }
+
+/* Feedback Page Styles */
+.feedback-page {
+  margin: 2rem;
+}
+
+.feedback-title {
+  color: #4d869c;
+  font-weight: bold;
+}
+
+.feedback-tambah-btn {
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.feedback-table {
+  width: 100%;
+  margin-top: 1rem;
+  border-collapse: collapse;
+}
+
+.feedback-table th,
+.feedback-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.feedback-table thead {
+  background-color: #f0f0f0;
+}
+
+.feedback-logout-btn {
+  margin-top: 1.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.feedback-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  overflow: auto;
+}
+
+.feedback-modal-content {
+  background: white;
+  padding: 2rem;
+  margin: 40px auto;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 8px;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+}
+
+@media (max-width: 500px) {
+  .feedback-modal-content {
+    width: 95vw;
+    padding: 1rem;
+  }
+}
+
+.feedback-img-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.feedback-table-img {
+  max-width: 80px;
+  max-height: 80px;
+  border-radius: 4px;
+  display: block;
+  margin: 0 auto;
+}
+
+.feedback-action-btn {
+  padding: 0.3rem 0.8rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  margin: 0 2px;
+  cursor: pointer;
+  font-size: 0.95em;
+  transition: background 0.2s;
+}
+
+.feedback-edit-btn {
+  background: #4d869c;
+  color: #fff;
+}
+
+.feedback-edit-btn:hover {
+  background: #37647a;
+}
+
+.feedback-delete-btn {
+  background: #ff4d4d;
+  color: #fff;
+}
+
+.feedback-delete-btn:hover {
+  background: #d93636;
+}

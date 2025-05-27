@@ -12,15 +12,15 @@ const FeedbackPage = {
     }
 
     return `
-      <main class="feedback-page" style="margin: 2rem;">
-        <h2 style="color: #4D869C; font-weight: bold;">Data Buket</h2>
+      <main class="feedback-page">
+        <h2 class="feedback-title">Data Buket</h2>
         
-        <button id="tambah-btn" style="margin: 1rem 0; padding: 0.5rem 1rem; background-color: #4CAF50; color: white; border: none; cursor: pointer;">
+        <button id="tambah-btn" class="feedback-tambah-btn">
           Tambah Data
         </button>
 
-        <table border="1" cellspacing="0" cellpadding="8" style="width: 100%; margin-top: 1rem;">
-          <thead style="background-color: #f0f0f0;">
+        <table class="feedback-table">
+          <thead>
             <tr>
               <th>ID</th>
               <th>Nama Buket</th>
@@ -34,36 +34,39 @@ const FeedbackPage = {
           <tbody id="feedback-table-body"></tbody>
         </table>
 
-        <button id="logout-btn" style="margin-top: 1.5rem; padding: 0.5rem 1rem; background-color: #ff4d4d; color: white; border: none; cursor: pointer;">
+        <button id="logout-btn" class="feedback-logout-btn">
           Logout
         </button>
 
         <!-- Modal -->
-        <div id="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
-          <div style="background:white; padding:2rem; margin:5% auto; width:400px; border-radius:8px;">
+        <div id="modal" class="feedback-modal">
+          <div class="feedback-modal-content" id="modal-content">
             <h3 id="modal-title">Tambah Data Buket</h3>
             <form id="form-tambah">
               <input type="hidden" id="edit-id">
               <input type="hidden" id="old-flower">
 
               <label>Nama Buket:</label><br>
-              <input type="text" id="flower" required style="width:100%"><br><br>
+              <input type="text" id="flower" required class="feedback-input"><br><br>
 
               <label>Varian:</label><br>
-              <input type="text" id="varian" required style="width:100%"><br><br>
+              <input type="text" id="varian" required class="feedback-input"><br><br>
 
               <label>Harga:</label><br>
-              <input type="number" id="harga" required style="width:100%"><br><br>
+              <input type="number" id="harga" required class="feedback-input"><br><br>
 
               <label>Deskripsi:</label><br>
-              <textarea id="deskripsi" required style="width:100%"></textarea><br><br>
+              <textarea id="deskripsi" required class="feedback-input"></textarea><br><br>
 
               <label>Gambar:</label><br>
-              <input type="file" id="gambar" accept="image/*"><br>
-              <img id="preview-gambar" src="" style="max-width:100px; max-height:100px; display:none; margin-top:8px;"><br><br>
+              <input type="file" id="gambar" accept="image/*" class="feedback-input"><br>
+              <div class="feedback-img-center">
+                <img id="preview-gambar" src="" class="feedback-preview-gambar">
+              </div>
+              <br>
 
-              <button type="submit" style="padding:0.5rem 1rem;">Simpan</button>
-              <button type="button" id="close-modal" style="margin-left:1rem;">Batal</button>
+              <button type="submit" class="feedback-submit-btn">Simpan</button>
+              <button type="button" id="close-modal" class="feedback-cancel-btn">Batal</button>
             </form>
           </div>
         </div>
@@ -143,6 +146,13 @@ const FeedbackPage = {
 
     tambahBtn.addEventListener('click', () => openModal());
     closeModal.addEventListener('click', () => (modal.style.display = 'none'));
+
+    // Close modal when clicking outside modal-content
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
 
     gambarInput.addEventListener('change', () => {
       const file = gambarInput.files[0];
@@ -256,6 +266,11 @@ const FeedbackPage = {
       .select('*');
     const tableBody = document.getElementById('feedback-table-body');
 
+    // Helper for Rupiah formatting
+    const formatRupiah = (angka) => {
+      return 'Rp' + angka.toLocaleString('id-ID');
+    };
+
     if (!tableBody) return;
 
     if (error || feedbacks.length === 0) {
@@ -268,13 +283,23 @@ const FeedbackPage = {
             <tr>
               <td>${item.id}</td>
               <td>${item.flower}</td>
-              <td><img src="${imageUrl}" alt="${item.flower}" style="max-width:80px; max-height:80px;" /></td>
+              <td>
+                <div class="feedback-img-center">
+                  <img src="${imageUrl}" alt="${
+            item.flower
+          }" class="feedback-table-img" />
+                </div>
+              </td>
               <td>${item.varian}</td>
-              <td>${item.harga}</td>
+              <td>${formatRupiah(item.harga)}</td>
               <td>${item.deskripsi}</td>
               <td>
-                <button class="edit-btn" data-id="${item.id}">Edit</button>
-                <button class="delete-btn" data-id="${item.id}" data-flower="${item.flower}">Hapus</button>
+                <button class="edit-btn feedback-action-btn feedback-edit-btn" data-id="${
+                  item.id
+                }">Edit</button>
+                <button class="delete-btn feedback-action-btn feedback-delete-btn" data-id="${
+                  item.id
+                }" data-flower="${item.flower}">Hapus</button>
               </td>
             </tr>
           `;
