@@ -4,7 +4,7 @@ import LandingPage from '../views/pages/landing-page';
 import Detail from '../views/pages/detail';
 import LoginFlowry from '../views/pages/login';
 import RegistrasiFlowry from '../views/pages/registrasi';
-import FeedbackPage from '../views/pages/feedback';
+import AdminBouquet from '../views/pages/admin-bouquet';
 
 const routes = {
   '/': LandingPage, // default page
@@ -13,7 +13,7 @@ const routes = {
   '/faq': Faq,
   '/login': LoginFlowry,
   '/registrasi': RegistrasiFlowry,
-  '/feedback': FeedbackPage,
+  '/admin-bouquet': AdminBouquet,
   '/detail/:id': Detail,
 };
 

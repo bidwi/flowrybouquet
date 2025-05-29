@@ -49,7 +49,7 @@ const LoginFlowry = {
       localStorage.setItem('email', data.user.email);
 
       // Redirect ke halaman utama
-      window.location.hash = '#/feedback';
+      window.location.hash = '#/admin-bouquet';
       window.location.reload();
     });
   },
