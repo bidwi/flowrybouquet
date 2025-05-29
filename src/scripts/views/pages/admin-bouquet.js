@@ -12,14 +12,17 @@ const AdminBouquet = {
     }
 
     return `
-      <main class="feedback-page">
-        <h2 class="feedback-title">Data Buket</h2>
+      <main class="bouquet-page">
+        <div class="bouquet-header">
+          <h2 class="bouquet-title">Data Buket</h2>
+          <span class="bouquet-feedback-link" id="bouquet-feedback-link">Data feedback</span>
+        </div>
         
-        <button id="tambah-btn" class="feedback-tambah-btn">
+        <button id="tambah-btn" class="bouquet-tambah-btn">
           Tambah Data
         </button>
 
-        <table class="feedback-table">
+        <table class="bouquet-table">
           <thead>
             <tr>
               <th>ID</th>
@@ -31,42 +34,42 @@ const AdminBouquet = {
               <th>Aksi</th>
             </tr>
           </thead>
-          <tbody id="feedback-table-body"></tbody>
+          <tbody id="bouquet-table-body"></tbody>
         </table>
 
-        <button id="logout-btn" class="feedback-logout-btn">
+        <button id="logout-btn" class="bouquet-logout-btn">
           Logout
         </button>
 
         <!-- Modal -->
-        <div id="modal" class="feedback-modal">
-          <div class="feedback-modal-content" id="modal-content">
+        <div id="modal" class="bouquet-modal">
+          <div class="bouquet-modal-content" id="modal-content">
             <h3 id="modal-title">Tambah Data Buket</h3>
             <form id="form-tambah">
               <input type="hidden" id="edit-id">
               <input type="hidden" id="old-flower">
 
               <label>Nama Buket:</label><br>
-              <input type="text" id="flower" required class="feedback-input"><br><br>
+              <input type="text" id="flower" required class="bouquet-input"><br><br>
 
               <label>Varian:</label><br>
-              <input type="text" id="varian" required class="feedback-input"><br><br>
+              <input type="text" id="varian" required class="bouquet-input"><br><br>
 
               <label>Harga:</label><br>
-              <input type="number" id="harga" required class="feedback-input"><br><br>
+              <input type="number" id="harga" required class="bouquet-input"><br><br>
 
               <label>Deskripsi:</label><br>
-              <textarea id="deskripsi" required class="feedback-input"></textarea><br><br>
+              <textarea id="deskripsi" required class="bouquet-input bouquet-textarea"></textarea><br><br>
 
               <label>Gambar:</label><br>
-              <input type="file" id="gambar" accept="image/*" class="feedback-input"><br>
-              <div class="feedback-img-center">
-                <img id="preview-gambar" src="" class="feedback-preview-gambar">
+              <input type="file" id="gambar" accept="image/*" class="bouquet-input"><br>
+              <div class="bouquet-img-center">
+                <img id="preview-gambar" src="" class="bouquet-preview-gambar">
               </div>
               <br>
 
-              <button type="submit" class="feedback-submit-btn">Simpan</button>
-              <button type="button" id="close-modal" class="feedback-cancel-btn">Batal</button>
+              <button type="submit" class="bouquet-submit-btn">Simpan</button>
+              <button type="button" id="close-modal" class="bouquet-cancel-btn">Batal</button>
             </form>
           </div>
         </div>
@@ -79,6 +82,12 @@ const AdminBouquet = {
       data: { session },
     } = await supabase.auth.getSession();
     if (!session) return;
+
+    // Feedback link
+    const feedbackLink = document.getElementById('bouquet-feedback-link');
+    feedbackLink?.addEventListener('click', () => {
+      window.location.hash = '#/admin-feedback';
+    });
 
     const logoutBtn = document.getElementById('logout-btn');
     logoutBtn?.addEventListener('click', async () => {
@@ -141,7 +150,7 @@ const AdminBouquet = {
         previewGambar.style.display = 'none';
         previewGambar.src = '';
       }
-      modal.style.display = 'block';
+      modal.style.display = 'flex';
     };
 
     tambahBtn.addEventListener('click', () => openModal());
@@ -261,10 +270,8 @@ const AdminBouquet = {
     });
 
     // Render tabel
-    const { data: feedbacks, error } = await supabase
-      .from('flowry')
-      .select('*');
-    const tableBody = document.getElementById('feedback-table-body');
+    const { data: bouquets, error } = await supabase.from('flowry').select('*');
+    const tableBody = document.getElementById('bouquet-table-body');
 
     // Helper for Rupiah formatting
     const formatRupiah = (angka) => {
@@ -273,10 +280,10 @@ const AdminBouquet = {
 
     if (!tableBody) return;
 
-    if (error || feedbacks.length === 0) {
+    if (error || bouquets.length === 0) {
       tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Belum ada data buket.</td></tr>`;
     } else {
-      tableBody.innerHTML = feedbacks
+      tableBody.innerHTML = bouquets
         .map((item) => {
           const imageUrl = getImageUrl(item.flower);
           return `
@@ -284,22 +291,24 @@ const AdminBouquet = {
               <td>${item.id}</td>
               <td>${item.flower}</td>
               <td>
-                <div class="feedback-img-center">
+                <div class="bouquet-img-center">
                   <img src="${imageUrl}" alt="${
             item.flower
-          }" class="feedback-table-img" />
+          }" class="bouquet-table-img" />
                 </div>
               </td>
               <td>${item.varian}</td>
               <td>${formatRupiah(item.harga)}</td>
               <td>${item.deskripsi}</td>
               <td>
-                <button class="edit-btn feedback-action-btn feedback-edit-btn" data-id="${
-                  item.id
-                }">Edit</button>
-                <button class="delete-btn feedback-action-btn feedback-delete-btn" data-id="${
-                  item.id
-                }" data-flower="${item.flower}">Hapus</button>
+                <div class="bouquet-action-center">
+                  <button class="edit-btn bouquet-action-btn bouquet-edit-btn" data-id="${
+                    item.id
+                  }">Edit</button>
+                  <button class="delete-btn bouquet-action-btn bouquet-delete-btn" data-id="${
+                    item.id
+                  }" data-flower="${item.flower}">Hapus</button>
+                </div>
               </td>
             </tr>
           `;

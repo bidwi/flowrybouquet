@@ -5,6 +5,7 @@ import Detail from '../views/pages/detail';
 import LoginFlowry from '../views/pages/login';
 import RegistrasiFlowry from '../views/pages/registrasi';
 import AdminBouquet from '../views/pages/admin-bouquet';
+import AdminFeedback from '../views/pages/admin-feedback';
 
 const routes = {
   '/': LandingPage, // default page
@@ -14,6 +15,7 @@ const routes = {
   '/login': LoginFlowry,
   '/registrasi': RegistrasiFlowry,
   '/admin-bouquet': AdminBouquet,
+  '/admin-feedback': AdminFeedback,
   '/detail/:id': Detail,
 };
 
