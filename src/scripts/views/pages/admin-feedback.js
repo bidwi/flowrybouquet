@@ -118,7 +118,7 @@ const AdminFeedback = {
     const searchBtn = document.getElementById('feedback-search-btn');
     const tableBody = document.getElementById('admin-feedback-table-body');
 
-    function renderTable(data, keyword = '') {
+    function renderTable(data = '') {
       if (!tableBody) return;
       if (!data || data.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Belum ada data feedback.</td></tr>`;

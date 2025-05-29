@@ -11,6 +11,8 @@ export default [
       quotes: 'off',
       indent: 'off',
       'linebreak-style': 'off',
+      camelcase: 'off',
+      'no-useless-escape': 'off',
       'no-undef': 'off',
       'prefer-const': 'off',
       'prefer-template': 'off',

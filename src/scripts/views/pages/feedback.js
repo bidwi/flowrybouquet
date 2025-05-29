@@ -62,7 +62,7 @@ const FeedbackPage = {
     const varianBuket = document.getElementById('varian-buket');
     let selectedFlower = '';
     let selectedVarian = '';
-    namaBuket.addEventListener('change', function () {
+    namaBuket.addEventListener('change', () => {
       const selected = namaBuket.options[namaBuket.selectedIndex];
       varianBuket.value = selected.getAttribute('data-varian') || '';
       selectedFlower = selected.getAttribute('data-flower') || '';
