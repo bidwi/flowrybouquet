@@ -10,6 +10,7 @@ export default [
     rules: {
       quotes: 'off',
       indent: 'off',
+      'linebreak-style': 'off',
       'no-undef': 'off',
       'prefer-const': 'off',
       'prefer-template': 'off',

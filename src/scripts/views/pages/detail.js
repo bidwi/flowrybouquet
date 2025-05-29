@@ -1,4 +1,5 @@
 import details from '../../data/details.json';
+import supabase from '../../globals/supabaseClient';
 
 const Detail = {
   async render() {
@@ -12,7 +13,33 @@ const Detail = {
   async afterRender() {
     const hash = window.location.hash.split('/');
     const itemName = decodeURIComponent(hash[2]);
-    const item = details.find((detail) => detail.name === itemName);
+    let item = details.find((detail) => detail.name === itemName);
+
+    // Jika tidak ditemukan di details.json, cari di Supabase
+    if (!item) {
+      // Query ke Supabase
+      const { data, error } = await supabase
+        .from('flowry')
+        .select('*')
+        .eq('flower', itemName)
+        .single();
+
+      if (!error && data) {
+        // Format harga dan gambar
+        const formatRupiah = (angka) => 'Rp' + angka.toLocaleString('id-ID');
+        const getImageUrl = (flower) =>
+          `https://agrkvdjeigkdgdjapvuo.supabase.co/storage/v1/object/public/photo/${flower
+            .replace(/\s+/g, '-')
+            .toLowerCase()}`;
+        item = {
+          name: data.flower,
+          variant: data.varian,
+          price: formatRupiah(data.harga),
+          image: getImageUrl(data.flower),
+          description: data.deskripsi,
+        };
+      }
+    }
 
     if (!item) {
       document.getElementById('detail-container').innerHTML =

@@ -15,12 +15,17 @@ const AdminBouquet = {
       <main class="bouquet-page">
         <div class="bouquet-header">
           <h2 class="bouquet-title">Data Buket</h2>
-          <span class="bouquet-feedback-link" id="bouquet-feedback-link">Data feedback</span>
+          <a class="bouquet-feedback-link" id="bouquet-feedback-link">/ Data feedback</a>
         </div>
         
         <button id="tambah-btn" class="bouquet-tambah-btn">
           Tambah Data
         </button>
+
+        <div class="bouquet-search-row">
+          <input type="text" id="bouquet-search" class="bouquet-search-input" placeholder="Cari buket...">
+          <button id="bouquet-search-btn" class="bouquet-search-btn">Cari</button>
+        </div>
 
         <table class="bouquet-table">
           <thead>
@@ -49,27 +54,28 @@ const AdminBouquet = {
               <input type="hidden" id="edit-id">
               <input type="hidden" id="old-flower">
 
-              <label>Nama Buket:</label><br>
-              <input type="text" id="flower" required class="bouquet-input"><br><br>
+              <label>Nama Buket:</label>
+              <input type="text" id="flower" required class="bouquet-input">
 
-              <label>Varian:</label><br>
-              <input type="text" id="varian" required class="bouquet-input"><br><br>
+              <label>Varian:</label>
+              <input type="text" id="varian" required class="bouquet-input">
 
-              <label>Harga:</label><br>
-              <input type="number" id="harga" required class="bouquet-input"><br><br>
+              <label>Harga:</label>
+              <input type="number" id="harga" required class="bouquet-input">
 
-              <label>Deskripsi:</label><br>
-              <textarea id="deskripsi" required class="bouquet-input bouquet-textarea"></textarea><br><br>
+              <label>Deskripsi:</label>
+              <textarea id="deskripsi" required class="bouquet-input bouquet-textarea"></textarea>
 
-              <label>Gambar:</label><br>
-              <input type="file" id="gambar" accept="image/*" class="bouquet-input"><br>
-              <div class="bouquet-img-center">
-                <img id="preview-gambar" src="" class="bouquet-preview-gambar">
+              <label>Gambar:</label>
+              <div class="bouquet-file-preview-row">
+                <input type="file" id="gambar" accept="image/*" class="bouquet-input" style="margin-bottom:0;">
+                <img id="preview-gambar" src="" class="bouquet-preview-gambar" style="display:none;">
               </div>
-              <br>
 
-              <button type="submit" class="bouquet-submit-btn">Simpan</button>
-              <button type="button" id="close-modal" class="bouquet-cancel-btn">Batal</button>
+              <div style="margin-top: 1rem;">
+                <button type="submit" class="bouquet-submit-btn">Simpan</button>
+                <button type="button" id="close-modal" class="bouquet-cancel-btn">Batal</button>
+              </div>
             </form>
           </div>
         </div>
@@ -269,23 +275,46 @@ const AdminBouquet = {
       window.location.reload();
     });
 
-    // Render tabel
-    const { data: bouquets, error } = await supabase.from('flowry').select('*');
+    // Fetch data awal
+    const { data: bouquets } = await supabase.from('flowry').select('*');
     const tableBody = document.getElementById('bouquet-table-body');
+    const searchInput = document.getElementById('bouquet-search');
+    const searchBtn = document.getElementById('bouquet-search-btn');
 
     // Helper for Rupiah formatting
     const formatRupiah = (angka) => {
       return 'Rp' + angka.toLocaleString('id-ID');
     };
 
-    if (!tableBody) return;
-
-    if (error || bouquets.length === 0) {
-      tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Belum ada data buket.</td></tr>`;
-    } else {
-      tableBody.innerHTML = bouquets
-        .map((item) => {
+    // Render function untuk tabel, menerima array data dan keyword search
+    function renderTable(filteredBouquets, keyword = '') {
+      if (!tableBody) return;
+      if (!filteredBouquets || filteredBouquets.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Belum ada data buket.</td></tr>`;
+        return;
+      }
+      tableBody.innerHTML = filteredBouquets
+        .map((item, idx) => {
           const imageUrl = getImageUrl(item.flower);
+          let deskripsi = item.deskripsi || '';
+          let showSeeMore = false;
+          let fullDeskripsi = deskripsi;
+
+          // Show all if searching "see more"
+          if (
+            keyword &&
+            'see more'.includes(keyword) &&
+            deskripsi.length > 30
+          ) {
+            // show full
+          } else if (deskripsi.length > 30) {
+            deskripsi =
+              deskripsi.slice(0, 30) +
+              `... <span class="see-more" data-idx="${idx}">see more</span>`;
+            // eslint-disable-next-line no-unused-vars
+            showSeeMore = true;
+          }
+
           return `
             <tr>
               <td>${item.id}</td>
@@ -299,7 +328,11 @@ const AdminBouquet = {
               </td>
               <td>${item.varian}</td>
               <td>${formatRupiah(item.harga)}</td>
-              <td>${item.deskripsi}</td>
+              <td>
+                <span class="bouquet-deskripsi" data-idx="${idx}" data-full="${encodeURIComponent(
+            fullDeskripsi
+          )}">${deskripsi}</span>
+              </td>
               <td>
                 <div class="bouquet-action-center">
                   <button class="edit-btn bouquet-action-btn bouquet-edit-btn" data-id="${
@@ -361,7 +394,48 @@ const AdminBouquet = {
           window.location.reload();
         });
       });
+
+      // See more event
+      document.querySelectorAll('.see-more').forEach((el) => {
+        // eslint-disable-next-line no-unused-vars
+        el.addEventListener('click', (e) => {
+          const idx = el.getAttribute('data-idx');
+          const span = document.querySelector(
+            `.bouquet-deskripsi[data-idx="${idx}"]`
+          );
+          if (span) {
+            span.innerHTML = decodeURIComponent(span.getAttribute('data-full'));
+          }
+        });
+      });
     }
+
+    // Render tabel pertama kali
+    renderTable(bouquets);
+
+    // Search as you type or button
+    function doSearch() {
+      const keyword = searchInput.value.trim().toLowerCase();
+      if (!keyword) {
+        renderTable(bouquets);
+        return;
+      }
+      const filtered = bouquets.filter((item) => {
+        return (
+          (item.flower && item.flower.toLowerCase().includes(keyword)) ||
+          (item.varian && item.varian.toLowerCase().includes(keyword)) ||
+          (item.deskripsi && item.deskripsi.toLowerCase().includes(keyword)) ||
+          (item.harga && String(item.harga).toLowerCase().includes(keyword)) ||
+          (item.id && String(item.id).toLowerCase().includes(keyword)) ||
+          (keyword === 'see more' &&
+            item.deskripsi &&
+            item.deskripsi.length > 20)
+        );
+      });
+      renderTable(filtered, keyword);
+    }
+    searchInput.addEventListener('input', doSearch);
+    searchBtn.addEventListener('click', doSearch);
   },
 };
 
