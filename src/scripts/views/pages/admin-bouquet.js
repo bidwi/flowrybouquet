@@ -118,10 +118,11 @@ const AdminBouquet = {
 
     const bucketName = 'photo';
 
-    const getImageUrl = (flower) => {
+    const getImageUrl = (flower, varian) => {
+      // Gunakan nama file: nama-buket-varian (agar unik per varian)
       return `https://agrkvdjeigkdgdjapvuo.supabase.co/storage/v1/object/public/${bucketName}/${flower
         .replace(/\s+/g, '-')
-        .toLowerCase()}`;
+        .toLowerCase()}-${varian.replace(/\s+/g, '-').toLowerCase()}`;
     };
 
     const openModal = async (editData = null) => {
@@ -135,7 +136,11 @@ const AdminBouquet = {
         oldFlowerInput.value = editData.flower;
 
         // Coba download gambar dan preview (jika ada)
-        const filePath = editData.flower.replace(/\s+/g, '-').toLowerCase();
+        const filePath = `${editData.flower
+          .replace(/\s+/g, '-')
+          .toLowerCase()}-${editData.varian
+          .replace(/\s+/g, '-')
+          .toLowerCase()}`;
         const { data: blob, error: downloadError } = await supabase.storage
           .from(bucketName)
           .download(filePath);
@@ -195,15 +200,27 @@ const AdminBouquet = {
       const editId = editIdInput.value;
       const oldFlower = oldFlowerInput.value;
 
-      const newFileName = flower.replace(/\s+/g, '-').toLowerCase();
-      const oldFileName = oldFlower.replace(/\s+/g, '-').toLowerCase();
+      // Tambah validasi gambar wajib diisi saat tambah data
+      if (!editId && !gambarFile) {
+        alert('Gambar wajib diisi!');
+        gambarInput.focus();
+        return;
+      }
 
-      // Jika edit dan nama buket berubah, rename gambar di storage
+      // Nama file gambar: nama-buket-varian
+      const newFileName = `${flower.replace(/\s+/g, '-').toLowerCase()}-${varian
+        .replace(/\s+/g, '-')
+        .toLowerCase()}`;
+      const oldFileName = editId
+        ? `${oldFlower.replace(/\s+/g, '-').toLowerCase()}-${varianInput.value
+            .trim()
+            .replace(/\s+/g, '-')
+            .toLowerCase()}`
+        : '';
+
+      // Jika edit dan nama buket/varian berubah, rename gambar di storage
       if (editId) {
-        if (oldFlower !== flower) {
-          // Rename file di Supabase Storage:
-          // Supabase tidak punya rename method, jadi harus copy-download-upload-delete manual
-
+        if (oldFlower !== flower || oldFileName !== newFileName) {
           // Download file lama
           const { data: oldBlob, error: downloadError } = await supabase.storage
             .from(bucketName)
@@ -295,7 +312,7 @@ const AdminBouquet = {
       }
       tableBody.innerHTML = filteredBouquets
         .map((item, idx) => {
-          const imageUrl = getImageUrl(item.flower);
+          const imageUrl = getImageUrl(item.flower, item.varian);
           let deskripsi = item.deskripsi || '';
           let showSeeMore = false;
           let fullDeskripsi = deskripsi;
@@ -366,6 +383,9 @@ const AdminBouquet = {
         btn.addEventListener('click', async (e) => {
           const id = e.target.dataset.id;
           const flower = e.target.dataset.flower;
+          const varian =
+            e.target.closest('tr').querySelector('td:nth-child(4)')
+              ?.textContent || '';
           if (!id) return alert('ID tidak ditemukan!');
           if (!confirm(`Yakin ingin menghapus data dengan ID: ${id}?`)) return;
 
@@ -380,7 +400,9 @@ const AdminBouquet = {
           }
 
           // Hapus gambar dari storage
-          const fileName = flower.replace(/\s+/g, '-').toLowerCase();
+          const fileName = `${flower
+            .replace(/\s+/g, '-')
+            .toLowerCase()}-${varian.replace(/\s+/g, '-').toLowerCase()}`;
           const { error: storageDeleteError } = await supabase.storage
             .from(bucketName)
             .remove([fileName]);

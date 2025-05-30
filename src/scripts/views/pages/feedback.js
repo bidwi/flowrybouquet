@@ -5,37 +5,54 @@ const FeedbackPage = {
     // Ambil data flowry untuk dropdown
     const { data: bouquets } = await supabase.from('flowry').select('*');
 
-    // Buat opsi nama buket
+    // Buat list nama buket unik
+    const uniqueFlowers = [];
+    const flowerMap = {};
+    bouquets?.forEach((b) => {
+      if (!flowerMap[b.flower]) {
+        flowerMap[b.flower] = [];
+        uniqueFlowers.push(b.flower);
+      }
+      flowerMap[b.flower].push(b.varian);
+    });
+
+    // Buat opsi nama buket (hanya satu kali per nama)
     const options =
-      bouquets && bouquets.length
-        ? bouquets
-            .map(
-              (b) =>
-                `<option value="${b.id}" data-flower="${b.flower}" data-varian="${b.varian}">${b.flower}</option>`
-            )
+      uniqueFlowers.length > 0
+        ? uniqueFlowers
+            .map((flower) => `<option value="${flower}">${flower}</option>`)
             .join('')
         : '';
+
+    // Buat mapping varian per flower
+    const bouquetsByFlower = {};
+    bouquets?.forEach((b) => {
+      if (!bouquetsByFlower[b.flower]) bouquetsByFlower[b.flower] = [];
+      bouquetsByFlower[b.flower].push({ id: b.id, varian: b.varian });
+    });
+
+    // Simpan mapping ke window untuk afterRender
+    window.__bouquetsByFlower = bouquetsByFlower;
 
     return `
       <main class="feedback-page">
         <div class="feedback-header">
           <h2 class="feedback-title">Kirim <em>Feedback</em> Buket</h2>
         </div>
-        <form id="feedback-form" class="feedback-form" enctype="multipart/form-data">
-          <label for="gambar">Gambar (Maksimal 4MB)</label>
+        <form id="feedback-form" class="feedback-form" enctype="multipart/form-data" autocomplete="off">
+          <label for="gambar">Gambar (Maksimal 4MB) <span style="color:red">*</span></label>
           <input type="file" id="gambar" name="gambar" accept="image/*" required />
           <img id="preview-gambar" style="max-width:120px;display:none;margin:8px 0;" />
 
-          <label for="nama-buket">Nama Buket</label>
+          <label for="nama-buket">Nama Buket <span style="color:red">*</span></label>
           <select id="nama-buket" name="nama-buket" required>
             <option value="">Pilih buket...</option>
             ${options}
           </select>
 
-          <label for="varian-buket">Varian Buket</label>
-          <input type="text" id="varian-buket" name="varian-buket" readonly placeholder="Varian akan terisi otomatis" />
+          <div id="varian-buket-wrapper"></div>
 
-          <label>Rating</label>
+          <label>Rating <span style="color:red">*</span></label>
           <div id="rating-stars" class="rating-stars">
             ${[1, 2, 3, 4, 5]
               .map(
@@ -46,7 +63,7 @@ const FeedbackPage = {
           </div>
           <input type="hidden" id="rating" name="rating" required />
 
-          <label for="feedback">Deskripsi</label>
+          <label for="feedback">Deskripsi <span style="color:red">*</span></label>
           <textarea id="feedback" name="feedback" required placeholder="Tulis feedback Anda..."></textarea>
 
           <button type="submit" class="feedback-submit-btn">Submit Form</button>
@@ -57,16 +74,62 @@ const FeedbackPage = {
   },
 
   async afterRender() {
-    // Isi varian otomatis saat nama buket dipilih
+    const bouquetsByFlower = window.__bouquetsByFlower || {};
     const namaBuket = document.getElementById('nama-buket');
-    const varianBuket = document.getElementById('varian-buket');
+    const varianWrapper = document.getElementById('varian-buket-wrapper');
     let selectedFlower = '';
     let selectedVarian = '';
-    namaBuket.addEventListener('change', () => {
-      const selected = namaBuket.options[namaBuket.selectedIndex];
-      varianBuket.value = selected.getAttribute('data-varian') || '';
-      selectedFlower = selected.getAttribute('data-flower') || '';
-      selectedVarian = selected.getAttribute('data-varian') || '';
+    let selectedIdFlowry = '';
+
+    function renderVarianInput(flower) {
+      varianWrapper.innerHTML = '';
+      if (!flower || !bouquetsByFlower[flower]) return;
+      const variants = bouquetsByFlower[flower];
+      if (variants.length === 1) {
+        // Satu varian, readonly input
+        varianWrapper.innerHTML = `
+          <label for="varian-buket">Varian Buket <span style="color:red">*</span></label>
+          <input type="text" id="varian-buket" name="varian-buket" value="${variants[0].varian}" readonly required />
+        `;
+        selectedVarian = variants[0].varian;
+        selectedIdFlowry = variants[0].id;
+      } else {
+        // Banyak varian, dropdown
+        varianWrapper.innerHTML = `
+          <label for="varian-buket">Varian Buket <span style="color:red">*</span></label>
+          <select id="varian-buket" name="varian-buket" required>
+            <option value="">Pilih varian...</option>
+            ${variants
+              .map(
+                (v) =>
+                  `<option value="${v.varian}" data-id="${v.id}">${v.varian}</option>`
+              )
+              .join('')}
+          </select>
+        `;
+        selectedVarian = '';
+        selectedIdFlowry = '';
+      }
+    }
+
+    namaBuket.addEventListener('change', function () {
+      selectedFlower = namaBuket.value;
+      renderVarianInput(selectedFlower);
+
+      // Jika dropdown, listen perubahan varian
+      const varianSelect = document.getElementById('varian-buket');
+      if (varianSelect && varianSelect.tagName === 'SELECT') {
+        varianSelect.addEventListener('change', function () {
+          selectedVarian = varianSelect.value;
+          selectedIdFlowry =
+            varianSelect.options[varianSelect.selectedIndex].getAttribute(
+              'data-id'
+            ) || '';
+        });
+      } else if (varianSelect && varianSelect.tagName === 'INPUT') {
+        selectedVarian = varianSelect.value;
+        selectedIdFlowry = bouquetsByFlower[selectedFlower][0].id;
+      }
     });
 
     // Preview gambar
@@ -109,14 +172,43 @@ const FeedbackPage = {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      // Validasi
-      if (!ratingInput.value) {
+      // Validasi manual semua input
+      const gambarFile = gambarInput.files[0];
+      const namaBuketVal = namaBuket.value;
+      const varianInput = document.getElementById('varian-buket');
+      const varianVal = varianInput ? varianInput.value : '';
+      const ratingVal = ratingInput.value;
+      const feedbackVal = document.getElementById('feedback').value.trim();
+
+      if (!gambarFile) {
+        alert('Gambar wajib diisi!');
+        gambarInput.focus();
+        return;
+      }
+      if (gambarFile.type !== 'image/jpeg' && gambarFile.type !== 'image/png') {
+        alert('Format gambar harus JPG/JPEG atau PNG!');
+        gambarInput.value = '';
+        previewGambar.src = '';
+        previewGambar.style.display = 'none';
+        return;
+      }
+      if (!namaBuketVal) {
+        alert('Nama buket wajib dipilih!');
+        namaBuket.focus();
+        return;
+      }
+      if (!varianVal) {
+        alert('Varian buket wajib dipilih!');
+        varianInput?.focus();
+        return;
+      }
+      if (!ratingVal) {
         alert('Pilih rating terlebih dahulu!');
         return;
       }
-      const gambarFile = gambarInput.files[0];
-      if (!gambarFile) {
-        alert('Pilih gambar terlebih dahulu!');
+      if (!feedbackVal) {
+        alert('Deskripsi wajib diisi!');
+        document.getElementById('feedback').focus();
         return;
       }
       if (gambarFile.size > 4 * 1024 * 1024) {
@@ -124,8 +216,21 @@ const FeedbackPage = {
         return;
       }
 
-      const id_flowry = namaBuket.value;
-      const feedback = document.getElementById('feedback').value.trim();
+      // Pastikan id_flowry benar
+      let id_flowry = selectedIdFlowry;
+      if (!id_flowry) {
+        // fallback jika user belum memilih varian setelah memilih nama buket
+        if (varianInput && varianInput.tagName === 'SELECT') {
+          const selected = varianInput.options[varianInput.selectedIndex];
+          id_flowry = selected?.getAttribute('data-id') || '';
+        } else if (varianInput && varianInput.tagName === 'INPUT') {
+          id_flowry = bouquetsByFlower[namaBuketVal][0].id;
+        }
+      }
+      if (!id_flowry) {
+        alert('Varian buket tidak valid!');
+        return;
+      }
 
       // Simpan ke tabel feedback
       const { data: insertData, error: insertError } = await supabase
@@ -133,11 +238,11 @@ const FeedbackPage = {
         .insert([
           {
             id_flowry: id_flowry,
-            rating: Number(ratingInput.value),
-            feedback: feedback,
+            rating: Number(ratingVal),
+            feedback: feedbackVal,
           },
         ])
-        .select('id_feedback'); // select id_feedback agar dapat id-nya
+        .select('id_feedback');
 
       if (insertError) {
         alert('Gagal mengirim feedback: ' + insertError.message);
@@ -151,32 +256,11 @@ const FeedbackPage = {
         return;
       }
 
-      // Nama file gambar: id_feedback-flower-varian-timestamp-namagambar.ext
-      let flower = selectedFlower || '';
-      let varian = selectedVarian || '';
-      if (!flower) {
-        const selected = namaBuket.options[namaBuket.selectedIndex];
-        flower = selected?.getAttribute('data-flower') || '';
-        varian = selected?.getAttribute('data-varian') || '';
-      }
-      const clean = (str) =>
-        (str || '')
-          .toString()
-          .replace(/\s+/g, '-')
-          .replace(/[^a-zA-Z0-9\-]/g, '')
-          .toLowerCase();
-      const fileName =
-        id_feedback +
-        '-' +
-        clean(flower) +
-        '-' +
-        clean(varian) +
-        '-' +
-        Date.now() +
-        '-' +
-        gambarFile.name.replace(/\s+/g, '-').toLowerCase();
+      // Nama file gambar: id_feedback.ext (ambil ekstensi dari file asli)
+      const ext = gambarFile.name.split('.').pop();
+      const fileName = `${id_feedback}.${ext}`;
 
-      // Upload gambar ke bucket "feedback" dengan nama yang mengandung id_feedback
+      // Upload gambar ke bucket "feedback" dengan nama id_feedback.ext (overwrite jika ada)
       const { error: uploadError } = await supabase.storage
         .from('feedback')
         .upload(fileName, gambarFile, { upsert: true });

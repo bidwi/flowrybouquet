@@ -109,7 +109,11 @@ const AdminFeedback = {
 
     function findImageFile(id_feedback) {
       if (!files || !Array.isArray(files)) return '';
-      const found = files.find((f) => f.name.includes(String(id_feedback)));
+      // Cari file yang namanya persis id_feedback.ext (bukan sekadar mengandung)
+      const found = files.find((f) => {
+        const [name] = f.name.split('.');
+        return name === String(id_feedback);
+      });
       return found ? found.name : '';
     }
 
