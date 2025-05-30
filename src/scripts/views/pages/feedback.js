@@ -34,6 +34,17 @@ const FeedbackPage = {
     // Simpan mapping ke window untuk afterRender
     window.__bouquetsByFlower = bouquetsByFlower;
 
+    // Ambil parameter dari hash jika ada (untuk autofill)
+    let autofillName = '';
+    let autofillVarian = '';
+    const hash = window.location.hash.split('/');
+    if (hash[1] === 'detail' && hash[2]) {
+      const itemName = decodeURIComponent(hash[2]);
+      if (itemName.includes('--')) {
+        [autofillName, autofillVarian] = itemName.split('--');
+      }
+    }
+
     return `
       <main class="feedback-page">
         <div class="feedback-header">
@@ -45,7 +56,7 @@ const FeedbackPage = {
           <img id="preview-gambar" style="max-width:120px;display:none;margin:8px 0;" />
 
           <label for="nama-buket">Nama Buket <span style="color:red">*</span></label>
-          <select id="nama-buket" name="nama-buket" required>
+          <select id="nama-buket" name="nama-buket" required ${autofillName ? 'disabled' : ''}>
             <option value="">Pilih buket...</option>
             ${options}
           </select>
@@ -77,8 +88,18 @@ const FeedbackPage = {
     const bouquetsByFlower = window.__bouquetsByFlower || {};
     const namaBuket = document.getElementById('nama-buket');
     const varianWrapper = document.getElementById('varian-buket-wrapper');
-    let selectedFlower = '';
-    let selectedVarian = '';
+    // Autofill dari hash jika ada
+    let autofillName = '';
+    let autofillVarian = '';
+    const hash = window.location.hash.split('/');
+    if (hash[1] === 'detail' && hash[2]) {
+      const itemName = decodeURIComponent(hash[2]);
+      if (itemName.includes('--')) {
+        [autofillName, autofillVarian] = itemName.split('--');
+      }
+    }
+    let selectedFlower = autofillName || '';
+    let selectedVarian = autofillVarian || '';
     let selectedIdFlowry = '';
 
     function renderVarianInput(flower) {
@@ -94,7 +115,20 @@ const FeedbackPage = {
         selectedVarian = variants[0].varian;
         selectedIdFlowry = variants[0].id;
       } else {
-        // Banyak varian, dropdown
+        // Banyak varian, jika autofill, langsung pilih varian spesifik
+        if (autofillVarian) {
+          const match = variants.find(v => v.varian === autofillVarian);
+          if (match) {
+            varianWrapper.innerHTML = `
+              <label for="varian-buket">Varian Buket <span style="color:red">*</span></label>
+              <input type="text" id="varian-buket" name="varian-buket" value="${match.varian}" readonly required />
+            `;
+            selectedVarian = match.varian;
+            selectedIdFlowry = match.id;
+            return;
+          }
+        }
+        // Jika tidak autofill, tampilkan dropdown
         varianWrapper.innerHTML = `
           <label for="varian-buket">Varian Buket <span style="color:red">*</span></label>
           <select id="varian-buket" name="varian-buket" required>
@@ -112,7 +146,12 @@ const FeedbackPage = {
       }
     }
 
-    if (namaBuket) {
+    // Set nama buket dan varian jika autofill
+    if (autofillName && namaBuket) {
+      namaBuket.value = autofillName;
+      renderVarianInput(autofillName);
+      namaBuket.disabled = true;
+    } else if (namaBuket) {
       namaBuket.addEventListener('change', function () {
         selectedFlower = namaBuket.value;
         renderVarianInput(selectedFlower);
@@ -132,6 +171,15 @@ const FeedbackPage = {
           selectedIdFlowry = bouquetsByFlower[selectedFlower][0].id;
         }
       });
+    }
+
+    // Jika autofill varian, set selectedIdFlowry
+    if (autofillName && autofillVarian && bouquetsByFlower[autofillName]) {
+      const match = bouquetsByFlower[autofillName].find(v => v.varian === autofillVarian);
+      if (match) {
+        selectedVarian = match.varian;
+        selectedIdFlowry = match.id;
+      }
     }
 
     // Preview gambar

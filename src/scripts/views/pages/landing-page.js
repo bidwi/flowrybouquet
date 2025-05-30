@@ -96,7 +96,9 @@ const LandingPage = {
         // Cegah klik tombol wishlist memicu detail
         if (e.target.classList.contains('wishlist-btn')) return;
         const name = card.getAttribute('data-name');
-        window.location.hash = `#/detail/${encodeURIComponent(name)}`;
+        const variant = card.getAttribute('data-variant');
+        // Arahkan ke detail dengan nama dan varian spesifik
+        window.location.hash = `#/detail/${encodeURIComponent(name + '--' + variant)}`;
       });
     });
   },
@@ -111,7 +113,6 @@ const LandingPage = {
             <h4 class="judul-buket"><b>${name}</b></h4> 
             <p class="varian-buket">Varian: ${variant}</p>
             <button type="button" class="button-card">${price}</button> 
-            <!-- <span style="float:right;font-size:0.95em;color:#888;">${price}</span> -->
           </article>
         </section>
       </article>
