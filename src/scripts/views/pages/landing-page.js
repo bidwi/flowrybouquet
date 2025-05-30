@@ -42,11 +42,11 @@ const LandingPage = {
     const { data: bouquets } = await supabase.from('flowry').select('*');
     // Helper untuk format harga
     const formatRupiah = (angka) => 'Rp' + angka.toLocaleString('id-ID');
-    // Helper untuk gambar supabase (harus unik per varian)
-    const getImageUrl = (flower, varian) =>
+    // Helper untuk gambar supabase
+    const getImageUrl = (flower) =>
       `https://agrkvdjeigkdgdjapvuo.supabase.co/storage/v1/object/public/photo/${flower
         .replace(/\s+/g, '-')
-        .toLowerCase()}-${varian.replace(/\s+/g, '-').toLowerCase()}`;
+        .toLowerCase()}`;
 
     // Siapkan array gabungan: details.json + supabase
     const katalog = [
@@ -65,7 +65,7 @@ const LandingPage = {
             name: item.flower,
             variant: item.varian,
             price: formatRupiah(item.harga),
-            image: getImageUrl(item.flower, item.varian),
+            image: getImageUrl(item.flower),
             description: item.deskripsi,
             source: 'supabase',
           }))
@@ -96,9 +96,7 @@ const LandingPage = {
         // Cegah klik tombol wishlist memicu detail
         if (e.target.classList.contains('wishlist-btn')) return;
         const name = card.getAttribute('data-name');
-        const variant = card.getAttribute('data-variant');
-        // Arahkan ke detail dengan nama dan varian spesifik
-        window.location.hash = `#/detail/${encodeURIComponent(name + '--' + variant)}`;
+        window.location.hash = `#/detail/${encodeURIComponent(name)}`;
       });
     });
   },
@@ -113,6 +111,7 @@ const LandingPage = {
             <h4 class="judul-buket"><b>${name}</b></h4> 
             <p class="varian-buket">Varian: ${variant}</p>
             <button type="button" class="button-card">${price}</button> 
+            <!-- <span style="float:right;font-size:0.95em;color:#888;">${price}</span> -->
           </article>
         </section>
       </article>

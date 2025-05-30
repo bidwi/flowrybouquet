@@ -118,28 +118,13 @@ const AdminBouquet = {
 
     const bucketName = 'photo';
 
-    const getImageUrl = (flower, varian) => {
-      // Gunakan nama file: nama-buket-varian (agar unik per varian)
+    const getImageUrl = (flower) => {
       return `https://agrkvdjeigkdgdjapvuo.supabase.co/storage/v1/object/public/${bucketName}/${flower
         .replace(/\s+/g, '-')
-        .toLowerCase()}-${varian.replace(/\s+/g, '-').toLowerCase()}`;
+        .toLowerCase()}`;
     };
 
     const openModal = async (editData = null) => {
-      if (
-        !modal ||
-        !modalTitle ||
-        !form ||
-        !flowerInput ||
-        !varianInput ||
-        !hargaInput ||
-        !deskripsiInput ||
-        !editIdInput ||
-        !oldFlowerInput ||
-        !previewGambar
-      )
-        return;
-
       if (editData) {
         modalTitle.innerText = 'Edit Data Buket';
         flowerInput.value = editData.flower;
@@ -150,11 +135,7 @@ const AdminBouquet = {
         oldFlowerInput.value = editData.flower;
 
         // Coba download gambar dan preview (jika ada)
-        const filePath = `${editData.flower
-          .replace(/\s+/g, '-')
-          .toLowerCase()}-${editData.varian
-          .replace(/\s+/g, '-')
-          .toLowerCase()}`;
+        const filePath = editData.flower.replace(/\s+/g, '-').toLowerCase();
         const { data: blob, error: downloadError } = await supabase.storage
           .from(bucketName)
           .download(filePath);
@@ -178,157 +159,121 @@ const AdminBouquet = {
       modal.style.display = 'flex';
     };
 
-    if (tambahBtn) tambahBtn.addEventListener('click', () => openModal());
-    if (closeModal)
-      closeModal.addEventListener('click', () => {
-        if (modal) modal.style.display = 'none';
-      });
+    tambahBtn.addEventListener('click', () => openModal());
+    closeModal.addEventListener('click', () => (modal.style.display = 'none'));
 
     // Close modal when clicking outside modal-content
-    if (modal) {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          modal.style.display = 'none';
-        }
-      });
-    }
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
 
-    if (gambarInput) {
-      gambarInput.addEventListener('change', () => {
-        const file = gambarInput.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            if (previewGambar) {
-              previewGambar.src = e.target.result;
-              previewGambar.style.display = 'block';
+    gambarInput.addEventListener('change', () => {
+      const file = gambarInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewGambar.src = e.target.result;
+          previewGambar.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        previewGambar.src = '';
+        previewGambar.style.display = 'none';
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const flower = flowerInput.value.trim();
+      const varian = varianInput.value.trim();
+      const harga = parseFloat(hargaInput.value);
+      const deskripsi = deskripsiInput.value.trim();
+      const gambarFile = gambarInput.files[0];
+      const editId = editIdInput.value;
+      const oldFlower = oldFlowerInput.value;
+
+      const newFileName = flower.replace(/\s+/g, '-').toLowerCase();
+      const oldFileName = oldFlower.replace(/\s+/g, '-').toLowerCase();
+
+      // Jika edit dan nama buket berubah, rename gambar di storage
+      if (editId) {
+        if (oldFlower !== flower) {
+          // Rename file di Supabase Storage:
+          // Supabase tidak punya rename method, jadi harus copy-download-upload-delete manual
+
+          // Download file lama
+          const { data: oldBlob, error: downloadError } = await supabase.storage
+            .from(bucketName)
+            .download(oldFileName);
+
+          if (!downloadError && oldBlob) {
+            // Upload ulang dengan nama baru
+            const { error: uploadError } = await supabase.storage
+              .from(bucketName)
+              .upload(newFileName, oldBlob, { upsert: true });
+
+            if (uploadError) {
+              alert('Gagal rename gambar lama: ' + uploadError.message);
+              return;
             }
-          };
-          reader.readAsDataURL(file);
-        } else if (previewGambar) {
-          previewGambar.src = '';
-          previewGambar.style.display = 'none';
+
+            // Hapus file lama
+            const { error: deleteError } = await supabase.storage
+              .from(bucketName)
+              .remove([oldFileName]);
+            if (deleteError) {
+              alert('Gagal menghapus gambar lama: ' + deleteError.message);
+              return;
+            }
+          }
         }
-      });
-    }
+      }
 
-    if (form) {
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+      // Upload gambar baru kalau ada file baru
+      if (gambarFile) {
+        const { error: uploadError } = await supabase.storage
+          .from(bucketName)
+          .upload(newFileName, gambarFile, { upsert: true });
 
-        const flower = flowerInput.value.trim();
-        const varian = varianInput.value.trim();
-        const harga = parseFloat(hargaInput.value);
-        const deskripsi = deskripsiInput.value.trim();
-        const gambarFile = gambarInput.files[0];
-        const editId = editIdInput.value;
-        const oldFlower = oldFlowerInput.value;
-
-        // Tambah validasi gambar wajib diisi saat tambah data
-        if (!editId && !gambarFile) {
-          alert('Gambar wajib diisi!');
-          gambarInput.focus();
+        if (uploadError) {
+          alert('Gagal mengupload gambar: ' + uploadError.message);
           return;
         }
+      }
 
-        // Cek duplikasi nama + varian (hanya saat tambah, bukan edit)
-        if (!editId) {
-          const { data: existing, error: checkError } = await supabase
-            .from('flowry')
-            .select('id')
-            .eq('flower', flower)
-            .eq('varian', varian)
-            .maybeSingle();
-          if (existing) {
-            alert('Data buket dengan nama dan varian tersebut sudah ada!');
-            return;
-          }
+      // Update atau insert data ke table
+      if (editId) {
+        const { error: updateError } = await supabase
+          .from('flowry')
+          .update({ flower, varian, harga, deskripsi })
+          .eq('id', editId);
+
+        if (updateError) {
+          alert('Gagal mengedit data: ' + updateError.message);
+          return;
         }
+      } else {
+        const { error: insertError } = await supabase.from('flowry').insert([
+          {
+            flower,
+            varian,
+            harga,
+            deskripsi,
+          },
+        ]);
 
-        // Nama file gambar: nama-buket-varian
-        const newFileName = `${flower
-          .replace(/\s+/g, '-')
-          .toLowerCase()}-${varian.replace(/\s+/g, '-').toLowerCase()}`;
-        const oldFileName = editId
-          ? `${oldFlower.replace(/\s+/g, '-').toLowerCase()}-${varianInput.value
-              .trim()
-              .replace(/\s+/g, '-')
-              .toLowerCase()}`
-          : '';
-
-        // Jika edit dan nama buket/varian berubah, rename gambar di storage
-        if (editId) {
-          if (oldFlower !== flower || oldFileName !== newFileName) {
-            // Download file lama
-            const { data: oldBlob, error: downloadError } =
-              await supabase.storage.from(bucketName).download(oldFileName);
-
-            if (!downloadError && oldBlob) {
-              // Upload ulang dengan nama baru
-              const { error: uploadError } = await supabase.storage
-                .from(bucketName)
-                .upload(newFileName, oldBlob, { upsert: true });
-
-              if (uploadError) {
-                alert('Gagal rename gambar lama: ' + uploadError.message);
-                return;
-              }
-
-              // Hapus file lama
-              const { error: deleteError } = await supabase.storage
-                .from(bucketName)
-                .remove([oldFileName]);
-              if (deleteError) {
-                alert('Gagal menghapus gambar lama: ' + deleteError.message);
-                return;
-              }
-            }
-          }
+        if (insertError) {
+          alert('Gagal menyimpan data buket: ' + insertError.message);
+          return;
         }
+      }
 
-        // Upload gambar baru kalau ada file baru
-        if (gambarFile) {
-          const { error: uploadError } = await supabase.storage
-            .from(bucketName)
-            .upload(newFileName, gambarFile, { upsert: true });
-
-          if (uploadError) {
-            alert('Gagal mengupload gambar: ' + uploadError.message);
-            return;
-          }
-        }
-
-        // Update atau insert data ke table
-        if (editId) {
-          const { error: updateError } = await supabase
-            .from('flowry')
-            .update({ flower, varian, harga, deskripsi })
-            .eq('id', editId);
-
-          if (updateError) {
-            alert('Gagal mengedit data: ' + updateError.message);
-            return;
-          }
-        } else {
-          const { error: insertError } = await supabase.from('flowry').insert([
-            {
-              flower,
-              varian,
-              harga,
-              deskripsi,
-            },
-          ]);
-
-          if (insertError) {
-            alert('Gagal menyimpan data buket: ' + insertError.message);
-            return;
-          }
-        }
-
-        modal.style.display = 'none';
-        window.location.reload();
-      });
-    }
+      modal.style.display = 'none';
+      window.location.reload();
+    });
 
     // Fetch data awal
     const { data: bouquets } = await supabase.from('flowry').select('*');
@@ -341,16 +286,175 @@ const AdminBouquet = {
       return 'Rp' + angka.toLocaleString('id-ID');
     };
 
+    // Tambahkan data-col pada th
+    function patchTableHeader() {
+      const ths = document.querySelectorAll('.bouquet-table th');
+      const cols = [
+        'id',
+        'nama_buket',
+        'gambar',
+        'varian',
+        'harga',
+        'deskripsi',
+        'aksi',
+      ];
+      ths.forEach((th, idx) => {
+        th.setAttribute('data-col', cols[idx]);
+      });
+    }
+
+    // Sort state
+    const sortState = {
+      column: null,
+      asc: true,
+    };
+
+    // Sorting logic
+    function sortBouquets(data) {
+      if (!sortState.column) return data;
+      const arr = [...data];
+      arr.sort((a, b) => {
+        let valA, valB;
+        switch (sortState.column) {
+          case 'id':
+            valA = Number(a.id);
+            valB = Number(b.id);
+            break;
+          case 'nama_buket':
+            valA = (a.flower || '').toLowerCase();
+            valB = (b.flower || '').toLowerCase();
+            break;
+          case 'varian':
+            valA = (a.varian || '').toLowerCase();
+            valB = (b.varian || '').toLowerCase();
+            break;
+          case 'harga':
+            valA = Number(a.harga);
+            valB = Number(b.harga);
+            break;
+          case 'deskripsi':
+            valA = (a.deskripsi || '').toLowerCase();
+            valB = (b.deskripsi || '').toLowerCase();
+            break;
+          default:
+            valA = '';
+            valB = '';
+        }
+        if (valA < valB) return sortState.asc ? -1 : 1;
+        if (valA > valB) return sortState.asc ? 1 : -1;
+        return 0;
+      });
+      return arr;
+    }
+
+    // Render sort icon di header
+    function renderSortIcons() {
+      const ths = document.querySelectorAll('.bouquet-table th');
+      ths.forEach((th) => {
+        th.querySelector('.sort-icon')?.remove();
+        let col = th.getAttribute('data-col');
+        if (!col) return;
+        // Hanya render icon di kolom yang bisa sort (bukan gambar/aksi)
+        if (['gambar', 'aksi'].includes(col)) return;
+        // Wrap th content in a flex container (jika belum)
+        if (!th.querySelector('.th-flex')) {
+          const flex = document.createElement('div');
+          flex.className = 'th-flex';
+          flex.style.display = 'flex';
+          flex.style.alignItems = 'center';
+          flex.style.justifyContent = 'space-between';
+          flex.style.width = '100%';
+          // Pindahkan semua child ke flex
+          while (th.firstChild) flex.appendChild(th.firstChild);
+          th.appendChild(flex);
+        }
+        const flex = th.querySelector('.th-flex');
+        // Pastikan teks align left, icon align right
+        if (flex.childNodes.length === 1) {
+          const textSpan = document.createElement('span');
+          textSpan.className = 'th-text';
+          textSpan.style.flex = '1';
+          textSpan.style.textAlign = 'left';
+          textSpan.style.fontWeight = 'inherit';
+          textSpan.appendChild(flex.firstChild);
+          flex.appendChild(textSpan);
+        }
+        // Hapus icon lama jika ada
+        flex.querySelector('.sort-icon')?.remove();
+        // Tambahkan icon sort
+        const icon = document.createElement('img');
+        icon.src = '../icons/caret-down.png';
+        icon.className = 'sort-icon';
+        icon.style.width = '11px';
+        icon.style.height = '11px';
+        icon.style.cursor = 'pointer';
+        icon.style.marginLeft = '8px';
+        icon.style.marginBottom = '2px';
+        icon.style.transition = 'transform 0.18s';
+        icon.style.alignSelf = 'flex-end';
+        // Rotasi jika descending
+        icon.style.transform =
+          sortState.column === col && !sortState.asc
+            ? 'rotate(180deg)'
+            : 'none';
+        if (sortState.column === col) {
+          icon.style.filter = 'none';
+        } else {
+          icon.style.filter = 'grayscale(1) opacity(0.6)';
+        }
+        flex.appendChild(icon);
+        icon.onclick = () => {
+          if (sortState.column === col) {
+            sortState.asc = !sortState.asc;
+          } else {
+            sortState.column = col;
+            sortState.asc = true;
+          }
+          renderTable(
+            sortBouquets(
+              searchInput.value.trim()
+                ? bouquets.filter((item) => {
+                    const keyword = searchInput.value.trim().toLowerCase();
+                    return (
+                      (item.flower &&
+                        item.flower.toLowerCase().includes(keyword)) ||
+                      (item.varian &&
+                        item.varian.toLowerCase().includes(keyword)) ||
+                      (item.deskripsi &&
+                        item.deskripsi.toLowerCase().includes(keyword)) ||
+                      (item.harga &&
+                        String(item.harga).toLowerCase().includes(keyword)) ||
+                      (item.id &&
+                        String(item.id).toLowerCase().includes(keyword)) ||
+                      (keyword === 'see more' &&
+                        item.deskripsi &&
+                        item.deskripsi.length > 20)
+                    );
+                  })
+                : bouquets
+            ),
+            searchInput.value.trim().toLowerCase()
+          );
+          renderSortIcons();
+        };
+      });
+    }
+
+    // Patch header
+    patchTableHeader();
+
     // Render function untuk tabel, menerima array data dan keyword search
     function renderTable(filteredBouquets, keyword = '') {
       if (!tableBody) return;
+      // Sort sebelum render
+      filteredBouquets = sortBouquets(filteredBouquets);
       if (!filteredBouquets || filteredBouquets.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Belum ada data buket.</td></tr>`;
         return;
       }
       tableBody.innerHTML = filteredBouquets
         .map((item, idx) => {
-          const imageUrl = getImageUrl(item.flower, item.varian);
+          const imageUrl = getImageUrl(item.flower);
           let deskripsi = item.deskripsi || '';
           let showSeeMore = false;
           let fullDeskripsi = deskripsi;
@@ -421,9 +525,6 @@ const AdminBouquet = {
         btn.addEventListener('click', async (e) => {
           const id = e.target.dataset.id;
           const flower = e.target.dataset.flower;
-          const varian =
-            e.target.closest('tr').querySelector('td:nth-child(4)')
-              ?.textContent || '';
           if (!id) return alert('ID tidak ditemukan!');
           if (!confirm(`Yakin ingin menghapus data dengan ID: ${id}?`)) return;
 
@@ -438,9 +539,7 @@ const AdminBouquet = {
           }
 
           // Hapus gambar dari storage
-          const fileName = `${flower
-            .replace(/\s+/g, '-')
-            .toLowerCase()}-${varian.replace(/\s+/g, '-').toLowerCase()}`;
+          const fileName = flower.replace(/\s+/g, '-').toLowerCase();
           const { error: storageDeleteError } = await supabase.storage
             .from(bucketName)
             .remove([fileName]);
@@ -472,27 +571,30 @@ const AdminBouquet = {
 
     // Render tabel pertama kali
     renderTable(bouquets);
+    renderSortIcons();
 
     // Search as you type or button
     function doSearch() {
       const keyword = searchInput.value.trim().toLowerCase();
-      if (!keyword) {
-        renderTable(bouquets);
-        return;
+      let filtered = bouquets;
+      if (keyword) {
+        filtered = bouquets.filter((item) => {
+          return (
+            (item.flower && item.flower.toLowerCase().includes(keyword)) ||
+            (item.varian && item.varian.toLowerCase().includes(keyword)) ||
+            (item.deskripsi &&
+              item.deskripsi.toLowerCase().includes(keyword)) ||
+            (item.harga &&
+              String(item.harga).toLowerCase().includes(keyword)) ||
+            (item.id && String(item.id).toLowerCase().includes(keyword)) ||
+            (keyword === 'see more' &&
+              item.deskripsi &&
+              item.deskripsi.length > 20)
+          );
+        });
       }
-      const filtered = bouquets.filter((item) => {
-        return (
-          (item.flower && item.flower.toLowerCase().includes(keyword)) ||
-          (item.varian && item.varian.toLowerCase().includes(keyword)) ||
-          (item.deskripsi && item.deskripsi.toLowerCase().includes(keyword)) ||
-          (item.harga && String(item.harga).toLowerCase().includes(keyword)) ||
-          (item.id && String(item.id).toLowerCase().includes(keyword)) ||
-          (keyword === 'see more' &&
-            item.deskripsi &&
-            item.deskripsi.length > 20)
-        );
-      });
       renderTable(filtered, keyword);
+      renderSortIcons();
     }
     searchInput.addEventListener('input', doSearch);
     searchBtn.addEventListener('click', doSearch);

@@ -56,7 +56,9 @@ const FeedbackPage = {
           <img id="preview-gambar" style="max-width:120px;display:none;margin:8px 0;" />
 
           <label for="nama-buket">Nama Buket <span style="color:red">*</span></label>
-          <select id="nama-buket" name="nama-buket" required ${autofillName ? 'disabled' : ''}>
+          <select id="nama-buket" name="nama-buket" required ${
+            autofillName ? 'disabled' : ''
+          }>
             <option value="">Pilih buket...</option>
             ${options}
           </select>
@@ -117,7 +119,7 @@ const FeedbackPage = {
       } else {
         // Banyak varian, jika autofill, langsung pilih varian spesifik
         if (autofillVarian) {
-          const match = variants.find(v => v.varian === autofillVarian);
+          const match = variants.find((v) => v.varian === autofillVarian);
           if (match) {
             varianWrapper.innerHTML = `
               <label for="varian-buket">Varian Buket <span style="color:red">*</span></label>
@@ -175,7 +177,9 @@ const FeedbackPage = {
 
     // Jika autofill varian, set selectedIdFlowry
     if (autofillName && autofillVarian && bouquetsByFlower[autofillName]) {
-      const match = bouquetsByFlower[autofillName].find(v => v.varian === autofillVarian);
+      const match = bouquetsByFlower[autofillName].find(
+        (v) => v.varian === autofillVarian
+      );
       if (match) {
         selectedVarian = match.varian;
         selectedIdFlowry = match.id;

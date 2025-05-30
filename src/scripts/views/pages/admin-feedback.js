@@ -26,7 +26,7 @@ const AdminFeedback = {
             <tr>
               <th>ID</th>
               <th>Gambar</th>
-              <th>Nama Buket</th>
+              <th>Buket</th>
               <th>Varian Buket</th>
               <th>Feedback</th>
               <th>Rating</th>
@@ -121,18 +121,59 @@ const AdminFeedback = {
       return found ? found.name : '';
     }
 
+    // State untuk sort
+    let sortState = {
+      column: null,
+      asc: true,
+    };
+
     // Search
     const searchInput = document.getElementById('feedback-search');
     const searchBtn = document.getElementById('feedback-search-btn');
     const tableBody = document.getElementById('admin-feedback-table-body');
 
-    function renderTable(data = '') {
+    function renderTable(data = '', keyword = '') {
       if (!tableBody) return;
-      if (!data || data.length === 0) {
+      let rows = data || [];
+      // Sorting
+      if (sortState.column) {
+        rows = [...rows].sort((a, b) => {
+          let valA, valB;
+          switch (sortState.column) {
+            case 'id_feedback':
+              valA = Number(a.id_feedback);
+              valB = Number(b.id_feedback);
+              break;
+            case 'nama_buket':
+              valA = (getBouquet(a.id_flowry)?.flower || '').toLowerCase();
+              valB = (getBouquet(b.id_flowry)?.flower || '').toLowerCase();
+              break;
+            case 'varian_buket':
+              valA = (getBouquet(a.id_flowry)?.varian || '').toLowerCase();
+              valB = (getBouquet(b.id_flowry)?.varian || '').toLowerCase();
+              break;
+            case 'feedback':
+              valA = (a.feedback || '').toLowerCase();
+              valB = (b.feedback || '').toLowerCase();
+              break;
+            case 'rating':
+              valA = Number(a.rating);
+              valB = Number(b.rating);
+              break;
+            default:
+              valA = '';
+              valB = '';
+          }
+          if (valA < valB) return sortState.asc ? -1 : 1;
+          if (valA > valB) return sortState.asc ? 1 : -1;
+          return 0;
+        });
+      }
+      if (!rows || rows.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Belum ada data feedback.</td></tr>`;
         return;
       }
-      tableBody.innerHTML = data
+      tableBody.innerHTML = rows
         .map((item) => {
           const bouquet = getBouquet(item.id_flowry);
           const imageFile = findImageFile(item.id_feedback);
@@ -261,7 +302,98 @@ const AdminFeedback = {
       });
     }
 
+    // Render sort icon di header
+    function renderSortIcons() {
+      const ths = document.querySelectorAll('.admin-feedback-table th');
+      ths.forEach((th) => {
+        th.querySelector('.sort-icon')?.remove();
+        let col = th.getAttribute('data-col');
+        if (!col) return;
+        // Hanya render icon di kolom yang bisa sort (bukan gambar/aksi)
+        if (['gambar', 'aksi'].includes(col)) return;
+        // Wrap th content in a flex container (jika belum)
+        if (!th.querySelector('.th-flex')) {
+          const flex = document.createElement('div');
+          flex.className = 'th-flex';
+          flex.style.display = 'flex';
+          flex.style.alignItems = 'center';
+          flex.style.justifyContent = 'space-between';
+          flex.style.width = '100%';
+          // Pindahkan semua child ke flex
+          while (th.firstChild) flex.appendChild(th.firstChild);
+          th.appendChild(flex);
+        }
+        const flex = th.querySelector('.th-flex');
+        // Pastikan teks align left, icon align right
+        if (flex.childNodes.length === 1) {
+          const textSpan = document.createElement('span');
+          textSpan.className = 'th-text';
+          textSpan.style.flex = '1';
+          textSpan.style.textAlign = 'left';
+          textSpan.style.fontWeight = 'inherit';
+          textSpan.appendChild(flex.firstChild);
+          flex.appendChild(textSpan);
+        }
+        // Hapus icon lama jika ada
+        flex.querySelector('.sort-icon')?.remove();
+        // Tambahkan icon sort
+        const icon = document.createElement('img');
+        icon.src = '../icons/caret-down.png';
+        icon.className = 'sort-icon';
+        icon.style.width = '11px';
+        icon.style.height = '11px';
+        icon.style.cursor = 'pointer';
+        icon.style.marginLeft = '8px';
+        icon.style.marginBottom = '2px';
+        icon.style.transition = 'transform 0.18s';
+        icon.style.alignSelf = 'flex-end';
+        icon.style.transform =
+          sortState.column === col && !sortState.asc
+            ? 'rotate(180deg)'
+            : 'none';
+        if (sortState.column === col) {
+          icon.style.filter = 'none';
+        } else {
+          icon.style.filter = 'grayscale(1) opacity(0.6)';
+        }
+        flex.appendChild(icon);
+        icon.onclick = () => {
+          if (sortState.column === col) {
+            sortState.asc = !sortState.asc;
+          } else {
+            sortState.column = col;
+            sortState.asc = true;
+          }
+          renderTable(feedbacks, searchInput.value.trim().toLowerCase());
+          renderSortIcons();
+        };
+      });
+    }
+
+    // Tambahkan data-col pada th
+    function patchTableHeader() {
+      const ths = document.querySelectorAll('.admin-feedback-table th');
+      const cols = [
+        'id_feedback',
+        'gambar',
+        'nama_buket',
+        'varian_buket',
+        'feedback',
+        'rating',
+        'aksi',
+      ];
+      ths.forEach((th, idx) => {
+        th.setAttribute('data-col', cols[idx]);
+      });
+    }
+
+    // Render tabel pertama kali
+    patchTableHeader();
+    renderTable(feedbacks);
+    renderSortIcons();
+
     // Search logic
+    // Update renderTable di search
     function doSearch() {
       const keyword = searchInput.value.trim().toLowerCase();
       if (!keyword) {
@@ -280,12 +412,10 @@ const AdminFeedback = {
         );
       });
       renderTable(filtered, keyword);
+      renderSortIcons();
     }
     if (searchInput) searchInput.addEventListener('input', doSearch);
     if (searchBtn) searchBtn.addEventListener('click', doSearch);
-
-    // Render tabel pertama kali
-    renderTable(feedbacks);
   },
 };
 

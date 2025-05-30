@@ -12,81 +12,30 @@ const Detail = {
 
   async afterRender() {
     const hash = window.location.hash.split('/');
-    // Mendukung format: #/detail/{name}--{variant}
     const itemName = decodeURIComponent(hash[2]);
-    let name = itemName;
-    let variant = null;
-    if (itemName.includes('--')) {
-      [name, variant] = itemName.split('--');
-    }
-
-    // Cari di details.json
-    let item = null;
-    if (variant) {
-      item = details.find(
-        (detail) =>
-          detail.name === name && detail.variant === variant
-      );
-    } else {
-      item = details.find((detail) => detail.name === name);
-    }
+    let item = details.find((detail) => detail.name === itemName);
 
     // Jika tidak ditemukan di details.json, cari di Supabase
     if (!item) {
-      let data = null;
-      let error = null;
-      if (variant) {
-        ({ data, error } = await supabase
-          .from('flowry')
-          .select('*')
-          .eq('flower', name)
-          .eq('varian', variant)
-          .maybeSingle());
-      } else {
-        // Ambil semua varian dengan nama tsb, jika ada lebih dari satu, tampilkan pilihan
-        const { data: allData, error: allError } = await supabase
-          .from('flowry')
-          .select('*')
-          .eq('flower', name);
-        if (!allError && Array.isArray(allData) && allData.length > 1) {
-          // Tampilkan pilihan varian
-          document.getElementById('detail-container').innerHTML =
-            `<p class="empty-message">Pilih varian buket:</p>
-            <ul style="margin-top:1em;">
-              ${allData
-                .map(
-                  (d) =>
-                    `<li style="margin-bottom:8px;">
-                      <a href="#/detail/${encodeURIComponent(
-                        d.flower + '--' + d.varian
-                      )}">
-                        ${d.flower} - ${d.varian}
-                      </a>
-                    </li>`
-                )
-                .join('')}
-            </ul>`;
-          return;
-        }
-        if (!allError && Array.isArray(allData) && allData.length === 1) {
-          data = allData[0];
-        } else {
-          data = null;
-        }
-        error = allError;
-      }
+      // Query ke Supabase
+      const { data, error } = await supabase
+        .from('flowry')
+        .select('*')
+        .eq('flower', itemName)
+        .single();
 
       if (!error && data) {
+        // Format harga dan gambar
         const formatRupiah = (angka) => 'Rp' + angka.toLocaleString('id-ID');
-        const getImageUrl = (flower, varian) =>
+        const getImageUrl = (flower) =>
           `https://agrkvdjeigkdgdjapvuo.supabase.co/storage/v1/object/public/photo/${flower
             .replace(/\s+/g, '-')
-            .toLowerCase()}-${varian.replace(/\s+/g, '-').toLowerCase()}`;
+            .toLowerCase()}`;
         item = {
           name: data.flower,
           variant: data.varian,
           price: formatRupiah(data.harga),
-          image: getImageUrl(data.flower, data.varian),
+          image: getImageUrl(data.flower),
           description: data.deskripsi,
         };
       }
@@ -101,7 +50,7 @@ const Detail = {
     const detailContainer = document.getElementById('detail-container');
     detailContainer.innerHTML = `
       <div class="detail-content">
-        <img class="detail-image" src="${item.image}" alt="${item.name}" onerror="this.onerror=null;this.src='/round.png';">
+        <img class="detail-image" src="${item.image}" alt="${item.name}">
         <div class="detail-info">
           <h1>${item.name}</h1>
           <h2>${item.variant}</h2>
@@ -131,10 +80,8 @@ const Detail = {
 
   addToWishlist(item) {
     let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-    // Cek duplikat berdasarkan nama dan varian
     const alreadyInWishlist = wishlist.some(
-      (wishlistItem) =>
-        wishlistItem.name === item.name && wishlistItem.variant === item.variant
+      (wishlistItem) => wishlistItem.name === item.name
     );
 
     if (!alreadyInWishlist) {
