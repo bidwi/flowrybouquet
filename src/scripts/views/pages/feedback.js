@@ -112,43 +112,49 @@ const FeedbackPage = {
       }
     }
 
-    namaBuket.addEventListener('change', function () {
-      selectedFlower = namaBuket.value;
-      renderVarianInput(selectedFlower);
+    if (namaBuket) {
+      namaBuket.addEventListener('change', function () {
+        selectedFlower = namaBuket.value;
+        renderVarianInput(selectedFlower);
 
-      // Jika dropdown, listen perubahan varian
-      const varianSelect = document.getElementById('varian-buket');
-      if (varianSelect && varianSelect.tagName === 'SELECT') {
-        varianSelect.addEventListener('change', function () {
+        // Jika dropdown, listen perubahan varian
+        const varianSelect = document.getElementById('varian-buket');
+        if (varianSelect && varianSelect.tagName === 'SELECT') {
+          varianSelect.addEventListener('change', function () {
+            selectedVarian = varianSelect.value;
+            selectedIdFlowry =
+              varianSelect.options[varianSelect.selectedIndex].getAttribute(
+                'data-id'
+              ) || '';
+          });
+        } else if (varianSelect && varianSelect.tagName === 'INPUT') {
           selectedVarian = varianSelect.value;
-          selectedIdFlowry =
-            varianSelect.options[varianSelect.selectedIndex].getAttribute(
-              'data-id'
-            ) || '';
-        });
-      } else if (varianSelect && varianSelect.tagName === 'INPUT') {
-        selectedVarian = varianSelect.value;
-        selectedIdFlowry = bouquetsByFlower[selectedFlower][0].id;
-      }
-    });
+          selectedIdFlowry = bouquetsByFlower[selectedFlower][0].id;
+        }
+      });
+    }
 
     // Preview gambar
     const gambarInput = document.getElementById('gambar');
     const previewGambar = document.getElementById('preview-gambar');
-    gambarInput.addEventListener('change', () => {
-      const file = gambarInput.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          previewGambar.src = e.target.result;
-          previewGambar.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-      } else {
-        previewGambar.src = '';
-        previewGambar.style.display = 'none';
-      }
-    });
+    if (gambarInput) {
+      gambarInput.addEventListener('change', () => {
+        const file = gambarInput.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            if (previewGambar) {
+              previewGambar.src = e.target.result;
+              previewGambar.style.display = 'block';
+            }
+          };
+          reader.readAsDataURL(file);
+        } else if (previewGambar) {
+          previewGambar.src = '';
+          previewGambar.style.display = 'none';
+        }
+      });
+    }
 
     // Rating bintang
     let rating = 0;
@@ -169,114 +175,121 @@ const FeedbackPage = {
 
     // Submit form
     const form = document.getElementById('feedback-form');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-      // Validasi manual semua input
-      const gambarFile = gambarInput.files[0];
-      const namaBuketVal = namaBuket.value;
-      const varianInput = document.getElementById('varian-buket');
-      const varianVal = varianInput ? varianInput.value : '';
-      const ratingVal = ratingInput.value;
-      const feedbackVal = document.getElementById('feedback').value.trim();
+        // Validasi manual semua input
+        const gambarFile = gambarInput.files[0];
+        const namaBuketVal = namaBuket.value;
+        const varianInput = document.getElementById('varian-buket');
+        const varianVal = varianInput ? varianInput.value : '';
+        const ratingVal = ratingInput.value;
+        const feedbackVal = document.getElementById('feedback').value.trim();
 
-      if (!gambarFile) {
-        alert('Gambar wajib diisi!');
-        gambarInput.focus();
-        return;
-      }
-      if (gambarFile.type !== 'image/jpeg' && gambarFile.type !== 'image/png') {
-        alert('Format gambar harus JPG/JPEG atau PNG!');
-        gambarInput.value = '';
-        previewGambar.src = '';
-        previewGambar.style.display = 'none';
-        return;
-      }
-      if (!namaBuketVal) {
-        alert('Nama buket wajib dipilih!');
-        namaBuket.focus();
-        return;
-      }
-      if (!varianVal) {
-        alert('Varian buket wajib dipilih!');
-        varianInput?.focus();
-        return;
-      }
-      if (!ratingVal) {
-        alert('Pilih rating terlebih dahulu!');
-        return;
-      }
-      if (!feedbackVal) {
-        alert('Deskripsi wajib diisi!');
-        document.getElementById('feedback').focus();
-        return;
-      }
-      if (gambarFile.size > 4 * 1024 * 1024) {
-        alert('Ukuran gambar maksimal 4MB!');
-        return;
-      }
-
-      // Pastikan id_flowry benar
-      let id_flowry = selectedIdFlowry;
-      if (!id_flowry) {
-        // fallback jika user belum memilih varian setelah memilih nama buket
-        if (varianInput && varianInput.tagName === 'SELECT') {
-          const selected = varianInput.options[varianInput.selectedIndex];
-          id_flowry = selected?.getAttribute('data-id') || '';
-        } else if (varianInput && varianInput.tagName === 'INPUT') {
-          id_flowry = bouquetsByFlower[namaBuketVal][0].id;
+        if (!gambarFile) {
+          alert('Gambar wajib diisi!');
+          gambarInput.focus();
+          return;
         }
-      }
-      if (!id_flowry) {
-        alert('Varian buket tidak valid!');
-        return;
-      }
+        if (
+          gambarFile.type !== 'image/jpeg' &&
+          gambarFile.type !== 'image/png'
+        ) {
+          alert('Format gambar harus JPG/JPEG atau PNG!');
+          gambarInput.value = '';
+          previewGambar.src = '';
+          previewGambar.style.display = 'none';
+          return;
+        }
+        if (!namaBuketVal) {
+          alert('Nama buket wajib dipilih!');
+          namaBuket.focus();
+          return;
+        }
+        if (!varianVal) {
+          alert('Varian buket wajib dipilih!');
+          varianInput?.focus();
+          return;
+        }
+        if (!ratingVal) {
+          alert('Pilih rating terlebih dahulu!');
+          return;
+        }
+        if (!feedbackVal) {
+          alert('Deskripsi wajib diisi!');
+          document.getElementById('feedback').focus();
+          return;
+        }
+        if (gambarFile.size > 4 * 1024 * 1024) {
+          alert('Ukuran gambar maksimal 4MB!');
+          return;
+        }
 
-      // Simpan ke tabel feedback
-      const { data: insertData, error: insertError } = await supabase
-        .from('feedback')
-        .insert([
-          {
-            id_flowry: id_flowry,
-            rating: Number(ratingVal),
-            feedback: feedbackVal,
-          },
-        ])
-        .select('id_feedback');
+        // Pastikan id_flowry benar
+        let id_flowry = selectedIdFlowry;
+        if (!id_flowry) {
+          // fallback jika user belum memilih varian setelah memilih nama buket
+          if (varianInput && varianInput.tagName === 'SELECT') {
+            const selected = varianInput.options[varianInput.selectedIndex];
+            id_flowry = selected?.getAttribute('data-id') || '';
+          } else if (varianInput && varianInput.tagName === 'INPUT') {
+            id_flowry = bouquetsByFlower[namaBuketVal][0].id;
+          }
+        }
+        if (!id_flowry) {
+          alert('Varian buket tidak valid!');
+          return;
+        }
 
-      if (insertError) {
-        alert('Gagal mengirim feedback: ' + insertError.message);
-        return;
-      }
+        // Simpan ke tabel feedback
+        const { data: insertData, error: insertError } = await supabase
+          .from('feedback')
+          .insert([
+            {
+              id_flowry: id_flowry,
+              rating: Number(ratingVal),
+              feedback: feedbackVal,
+            },
+          ])
+          .select('id_feedback');
 
-      // Dapatkan id_feedback dari hasil insert
-      const id_feedback = insertData && insertData[0]?.id_feedback;
-      if (!id_feedback) {
-        alert('Gagal mendapatkan ID feedback.');
-        return;
-      }
+        if (insertError) {
+          alert('Gagal mengirim feedback: ' + insertError.message);
+          return;
+        }
 
-      // Nama file gambar: id_feedback.ext (ambil ekstensi dari file asli)
-      const ext = gambarFile.name.split('.').pop();
-      const fileName = `${id_feedback}.${ext}`;
+        // Dapatkan id_feedback dari hasil insert
+        const id_feedback = insertData && insertData[0]?.id_feedback;
+        if (!id_feedback) {
+          alert('Gagal mendapatkan ID feedback.');
+          return;
+        }
 
-      // Upload gambar ke bucket "feedback" dengan nama id_feedback.ext (overwrite jika ada)
-      const { error: uploadError } = await supabase.storage
-        .from('feedback')
-        .upload(fileName, gambarFile, { upsert: true });
-      if (uploadError) {
-        alert('Gagal upload gambar: ' + uploadError.message);
-        return;
-      }
+        // Nama file gambar: id_feedback.ext (ambil ekstensi dari file asli)
+        const ext = gambarFile.name.split('.').pop();
+        const fileName = `${id_feedback}.${ext}`;
 
-      form.reset();
-      updateStars(0);
-      previewGambar.style.display = 'none';
-      document.getElementById('feedback-success').style.display = 'block';
-      setTimeout(() => {
-        document.getElementById('feedback-success').style.display = 'none';
-      }, 3000);
-    });
+        // Upload gambar ke bucket "feedback" dengan nama id_feedback.ext (overwrite jika ada)
+        const { error: uploadError } = await supabase.storage
+          .from('feedback')
+          .upload(fileName, gambarFile, { upsert: true });
+        if (uploadError) {
+          alert('Gagal upload gambar: ' + uploadError.message);
+          return;
+        }
+
+        form.reset();
+        updateStars(0);
+        if (previewGambar) previewGambar.style.display = 'none';
+        const feedbackSuccess = document.getElementById('feedback-success');
+        if (feedbackSuccess) feedbackSuccess.style.display = 'block';
+        setTimeout(() => {
+          const feedbackSuccess = document.getElementById('feedback-success');
+          if (feedbackSuccess) feedbackSuccess.style.display = 'none';
+        }, 3000);
+      });
+    }
   },
 };
 

@@ -126,6 +126,20 @@ const AdminBouquet = {
     };
 
     const openModal = async (editData = null) => {
+      if (
+        !modal ||
+        !modalTitle ||
+        !form ||
+        !flowerInput ||
+        !varianInput ||
+        !hargaInput ||
+        !deskripsiInput ||
+        !editIdInput ||
+        !oldFlowerInput ||
+        !previewGambar
+      )
+        return;
+
       if (editData) {
         modalTitle.innerText = 'Edit Data Buket';
         flowerInput.value = editData.flower;
@@ -164,133 +178,157 @@ const AdminBouquet = {
       modal.style.display = 'flex';
     };
 
-    tambahBtn.addEventListener('click', () => openModal());
-    closeModal.addEventListener('click', () => (modal.style.display = 'none'));
+    if (tambahBtn) tambahBtn.addEventListener('click', () => openModal());
+    if (closeModal)
+      closeModal.addEventListener('click', () => {
+        if (modal) modal.style.display = 'none';
+      });
 
     // Close modal when clicking outside modal-content
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.style.display = 'none';
-      }
-    });
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+    }
 
-    gambarInput.addEventListener('change', () => {
-      const file = gambarInput.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          previewGambar.src = e.target.result;
-          previewGambar.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-      } else {
-        previewGambar.src = '';
-        previewGambar.style.display = 'none';
-      }
-    });
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const flower = flowerInput.value.trim();
-      const varian = varianInput.value.trim();
-      const harga = parseFloat(hargaInput.value);
-      const deskripsi = deskripsiInput.value.trim();
-      const gambarFile = gambarInput.files[0];
-      const editId = editIdInput.value;
-      const oldFlower = oldFlowerInput.value;
-
-      // Tambah validasi gambar wajib diisi saat tambah data
-      if (!editId && !gambarFile) {
-        alert('Gambar wajib diisi!');
-        gambarInput.focus();
-        return;
-      }
-
-      // Nama file gambar: nama-buket-varian
-      const newFileName = `${flower.replace(/\s+/g, '-').toLowerCase()}-${varian
-        .replace(/\s+/g, '-')
-        .toLowerCase()}`;
-      const oldFileName = editId
-        ? `${oldFlower.replace(/\s+/g, '-').toLowerCase()}-${varianInput.value
-            .trim()
-            .replace(/\s+/g, '-')
-            .toLowerCase()}`
-        : '';
-
-      // Jika edit dan nama buket/varian berubah, rename gambar di storage
-      if (editId) {
-        if (oldFlower !== flower || oldFileName !== newFileName) {
-          // Download file lama
-          const { data: oldBlob, error: downloadError } = await supabase.storage
-            .from(bucketName)
-            .download(oldFileName);
-
-          if (!downloadError && oldBlob) {
-            // Upload ulang dengan nama baru
-            const { error: uploadError } = await supabase.storage
-              .from(bucketName)
-              .upload(newFileName, oldBlob, { upsert: true });
-
-            if (uploadError) {
-              alert('Gagal rename gambar lama: ' + uploadError.message);
-              return;
+    if (gambarInput) {
+      gambarInput.addEventListener('change', () => {
+        const file = gambarInput.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            if (previewGambar) {
+              previewGambar.src = e.target.result;
+              previewGambar.style.display = 'block';
             }
+          };
+          reader.readAsDataURL(file);
+        } else if (previewGambar) {
+          previewGambar.src = '';
+          previewGambar.style.display = 'none';
+        }
+      });
+    }
 
-            // Hapus file lama
-            const { error: deleteError } = await supabase.storage
-              .from(bucketName)
-              .remove([oldFileName]);
-            if (deleteError) {
-              alert('Gagal menghapus gambar lama: ' + deleteError.message);
-              return;
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const flower = flowerInput.value.trim();
+        const varian = varianInput.value.trim();
+        const harga = parseFloat(hargaInput.value);
+        const deskripsi = deskripsiInput.value.trim();
+        const gambarFile = gambarInput.files[0];
+        const editId = editIdInput.value;
+        const oldFlower = oldFlowerInput.value;
+
+        // Tambah validasi gambar wajib diisi saat tambah data
+        if (!editId && !gambarFile) {
+          alert('Gambar wajib diisi!');
+          gambarInput.focus();
+          return;
+        }
+
+        // Cek duplikasi nama + varian (hanya saat tambah, bukan edit)
+        if (!editId) {
+          const { data: existing, error: checkError } = await supabase
+            .from('flowry')
+            .select('id')
+            .eq('flower', flower)
+            .eq('varian', varian)
+            .maybeSingle();
+          if (existing) {
+            alert('Data buket dengan nama dan varian tersebut sudah ada!');
+            return;
+          }
+        }
+
+        // Nama file gambar: nama-buket-varian
+        const newFileName = `${flower
+          .replace(/\s+/g, '-')
+          .toLowerCase()}-${varian.replace(/\s+/g, '-').toLowerCase()}`;
+        const oldFileName = editId
+          ? `${oldFlower.replace(/\s+/g, '-').toLowerCase()}-${varianInput.value
+              .trim()
+              .replace(/\s+/g, '-')
+              .toLowerCase()}`
+          : '';
+
+        // Jika edit dan nama buket/varian berubah, rename gambar di storage
+        if (editId) {
+          if (oldFlower !== flower || oldFileName !== newFileName) {
+            // Download file lama
+            const { data: oldBlob, error: downloadError } =
+              await supabase.storage.from(bucketName).download(oldFileName);
+
+            if (!downloadError && oldBlob) {
+              // Upload ulang dengan nama baru
+              const { error: uploadError } = await supabase.storage
+                .from(bucketName)
+                .upload(newFileName, oldBlob, { upsert: true });
+
+              if (uploadError) {
+                alert('Gagal rename gambar lama: ' + uploadError.message);
+                return;
+              }
+
+              // Hapus file lama
+              const { error: deleteError } = await supabase.storage
+                .from(bucketName)
+                .remove([oldFileName]);
+              if (deleteError) {
+                alert('Gagal menghapus gambar lama: ' + deleteError.message);
+                return;
+              }
             }
           }
         }
-      }
 
-      // Upload gambar baru kalau ada file baru
-      if (gambarFile) {
-        const { error: uploadError } = await supabase.storage
-          .from(bucketName)
-          .upload(newFileName, gambarFile, { upsert: true });
+        // Upload gambar baru kalau ada file baru
+        if (gambarFile) {
+          const { error: uploadError } = await supabase.storage
+            .from(bucketName)
+            .upload(newFileName, gambarFile, { upsert: true });
 
-        if (uploadError) {
-          alert('Gagal mengupload gambar: ' + uploadError.message);
-          return;
+          if (uploadError) {
+            alert('Gagal mengupload gambar: ' + uploadError.message);
+            return;
+          }
         }
-      }
 
-      // Update atau insert data ke table
-      if (editId) {
-        const { error: updateError } = await supabase
-          .from('flowry')
-          .update({ flower, varian, harga, deskripsi })
-          .eq('id', editId);
+        // Update atau insert data ke table
+        if (editId) {
+          const { error: updateError } = await supabase
+            .from('flowry')
+            .update({ flower, varian, harga, deskripsi })
+            .eq('id', editId);
 
-        if (updateError) {
-          alert('Gagal mengedit data: ' + updateError.message);
-          return;
+          if (updateError) {
+            alert('Gagal mengedit data: ' + updateError.message);
+            return;
+          }
+        } else {
+          const { error: insertError } = await supabase.from('flowry').insert([
+            {
+              flower,
+              varian,
+              harga,
+              deskripsi,
+            },
+          ]);
+
+          if (insertError) {
+            alert('Gagal menyimpan data buket: ' + insertError.message);
+            return;
+          }
         }
-      } else {
-        const { error: insertError } = await supabase.from('flowry').insert([
-          {
-            flower,
-            varian,
-            harga,
-            deskripsi,
-          },
-        ]);
 
-        if (insertError) {
-          alert('Gagal menyimpan data buket: ' + insertError.message);
-          return;
-        }
-      }
-
-      modal.style.display = 'none';
-      window.location.reload();
-    });
+        modal.style.display = 'none';
+        window.location.reload();
+      });
+    }
 
     // Fetch data awal
     const { data: bouquets } = await supabase.from('flowry').select('*');

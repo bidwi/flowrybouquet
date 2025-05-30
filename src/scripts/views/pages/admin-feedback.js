@@ -85,10 +85,14 @@ const AdminFeedback = {
     const editRating = document.getElementById('edit-rating');
     const editFeedback = document.getElementById('edit-feedback');
 
-    closeModal?.addEventListener('click', () => (modal.style.display = 'none'));
-    modal?.addEventListener('click', (e) => {
-      if (e.target === modal) modal.style.display = 'none';
-    });
+    if (closeModal && modal) {
+      closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+      });
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.style.display = 'none';
+      });
+    }
 
     // Fetch data awal
     const { data: bouquets } = await supabase
@@ -181,7 +185,7 @@ const AdminFeedback = {
           editVarianBuket.value = bouquet.varian || '';
           editRating.value = item.rating || '';
           editFeedback.value = item.feedback || '';
-          modal.style.display = 'flex';
+          if (modal) modal.style.display = 'flex';
         });
       });
 
@@ -226,34 +230,36 @@ const AdminFeedback = {
     }
 
     // Edit form submit
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const id_feedback = editIdInput.value;
-      const rating = Number(editRating.value);
-      const feedbackText = editFeedback.value.trim();
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id_feedback = editIdInput.value;
+        const rating = Number(editRating.value);
+        const feedbackText = editFeedback.value.trim();
 
-      const { error: updateError } = await supabase
-        .from('feedback')
-        .update({ rating, feedback: feedbackText })
-        .eq('id_feedback', id_feedback);
+        const { error: updateError } = await supabase
+          .from('feedback')
+          .update({ rating, feedback: feedbackText })
+          .eq('id_feedback', id_feedback);
 
-      if (updateError) {
-        alert('Gagal mengedit feedback: ' + updateError.message);
-        return;
-      }
+        if (updateError) {
+          alert('Gagal mengedit feedback: ' + updateError.message);
+          return;
+        }
 
-      // Update data di array lokal
-      const idx = feedbacks.findIndex(
-        (f) => String(f.id_feedback) === String(id_feedback)
-      );
-      if (idx !== -1) {
-        feedbacks[idx].rating = rating;
-        feedbacks[idx].feedback = feedbackText;
-      }
+        // Update data di array lokal
+        const idx = feedbacks.findIndex(
+          (f) => String(f.id_feedback) === String(id_feedback)
+        );
+        if (idx !== -1) {
+          feedbacks[idx].rating = rating;
+          feedbacks[idx].feedback = feedbackText;
+        }
 
-      modal.style.display = 'none';
-      renderTable(feedbacks, searchInput.value.trim().toLowerCase());
-    });
+        modal.style.display = 'none';
+        renderTable(feedbacks, searchInput.value.trim().toLowerCase());
+      });
+    }
 
     // Search logic
     function doSearch() {
@@ -275,8 +281,8 @@ const AdminFeedback = {
       });
       renderTable(filtered, keyword);
     }
-    searchInput.addEventListener('input', doSearch);
-    searchBtn.addEventListener('click', doSearch);
+    if (searchInput) searchInput.addEventListener('input', doSearch);
+    if (searchBtn) searchBtn.addEventListener('click', doSearch);
 
     // Render tabel pertama kali
     renderTable(feedbacks);

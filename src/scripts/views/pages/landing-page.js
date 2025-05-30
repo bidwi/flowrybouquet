@@ -42,11 +42,11 @@ const LandingPage = {
     const { data: bouquets } = await supabase.from('flowry').select('*');
     // Helper untuk format harga
     const formatRupiah = (angka) => 'Rp' + angka.toLocaleString('id-ID');
-    // Helper untuk gambar supabase
-    const getImageUrl = (flower) =>
+    // Helper untuk gambar supabase (harus unik per varian)
+    const getImageUrl = (flower, varian) =>
       `https://agrkvdjeigkdgdjapvuo.supabase.co/storage/v1/object/public/photo/${flower
         .replace(/\s+/g, '-')
-        .toLowerCase()}`;
+        .toLowerCase()}-${varian.replace(/\s+/g, '-').toLowerCase()}`;
 
     // Siapkan array gabungan: details.json + supabase
     const katalog = [
@@ -65,7 +65,7 @@ const LandingPage = {
             name: item.flower,
             variant: item.varian,
             price: formatRupiah(item.harga),
-            image: getImageUrl(item.flower),
+            image: getImageUrl(item.flower, item.varian),
             description: item.deskripsi,
             source: 'supabase',
           }))
