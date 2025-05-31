@@ -152,3 +152,154 @@
     display: block;
   }
 }
+
+/* Responsive for Admin Bouquet Page */
+@media (max-width: 1100px) {
+  .bouquet-page {
+    padding: 1rem 0.5rem !important;
+    max-width: 100vw !important;
+    box-sizing: border-box;
+  }
+  .bouquet-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .bouquet-table {
+    min-width: 700px;
+    width: 100%;
+    border-collapse: collapse;
+    background: #fafbfc;
+  }
+  .bouquet-table th,
+  .bouquet-table td {
+    padding: 7px 4px;
+    font-size: 0.97em;
+    word-break: break-word;
+    max-width: 160px;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 700px) {
+  .bouquet-page {
+    padding: 0.5rem 0.1rem !important;
+    max-width: 100vw !important;
+  }
+  .bouquet-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .bouquet-table {
+    min-width: 500px;
+    font-size: 0.93em;
+  }
+  .bouquet-table th,
+  .bouquet-table td {
+    padding: 5px 2px;
+    font-size: 0.93em;
+    max-width: 90px;
+    white-space: normal;
+  }
+}
+
+/* Make table horizontally scrollable on small screens */
+@media (max-width: 900px) {
+  .bouquet-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .bouquet-table {
+    display: block;
+    width: 100%;
+    min-width: 600px;
+  }
+  .bouquet-table thead,
+  .bouquet-table tbody {
+    display: table-header-group;
+    width: 100%;
+  }
+}
+
+/* Responsive: Modal centering for admin pages */
+@media (max-width: 600px) {
+  .bouquet-modal-content {
+    margin: 10px auto !important;
+    padding: 0.7rem !important;
+    width: 98vw !important;
+    max-width: 99vw !important;
+  }
+}
+
+/* Responsive: Action buttons stack vertically on small screens */
+@media (max-width: 600px) {
+  .bouquet-action-center {
+    flex-direction: column;
+    gap: 6px;
+    align-items: stretch;
+  }
+}
+
+/* Responsive: Search row stack on small screens */
+@media (max-width: 600px) {
+  .bouquet-search-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  .bouquet-search-input,
+  .bouquet-search-btn {
+    width: 100%;
+    margin-top: 0;
+  }
+}
+
+/* White space for main content and table */
+.bouquet-page {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.08),
+    0 1.5px 4px 0 rgba(0, 0, 0, 0.04);
+  margin: 2rem auto;
+  padding: 2.5rem 2rem 2rem 2rem;
+}
+
+.bouquet-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1.5rem;
+}
+
+.bouquet-table {
+  background: #fafbfc;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px 0 rgba(77, 134, 156, 0.07);
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.bouquet-table th,
+.bouquet-table td {
+  vertical-align: top;
+  word-break: break-word;
+  white-space: normal;
+  max-width: 260px;
+  overflow-wrap: break-word;
+  padding: 10px 8px;
+}
+
+/* Hide horizontal scrollbar if not needed */
+.bouquet-table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+.bouquet-table-wrapper::-webkit-scrollbar-thumb {
+  background: #eee;
+  border-radius: 4px;
+}
