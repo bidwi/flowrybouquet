@@ -1200,6 +1200,12 @@ footer p a:hover {
   cursor: pointer;
   font-size: 0.95em;
   transition: background 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 32px;
+  line-height: 1.2;
 }
 
 .bouquet-edit-btn {
@@ -1291,10 +1297,6 @@ footer p a:hover {
   gap: 12px;
 }
 
-.bouquet-preview-gambar {
-  margin: 0;
-}
-
 /* Admin Feedback Table Styles */
 .admin-feedback-table {
   width: 100%;
@@ -1333,29 +1335,29 @@ footer p a:hover {
   margin: 0 auto;
 }
 
-/* Table header sort icon and text alignment */
+/* Prevent table header text from wrapping to new line */
+.bouquet-table th,
+.admin-feedback-table th {
+  white-space: nowrap;
+}
+
+/* Prevent action button text from wrapping to new line */
+.bouquet-action-btn,
+.bouquet-edit-btn,
+.bouquet-delete-btn {
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 32px;
+  line-height: 1.2;
+  padding: 0.3rem 0.8rem;
+}
+
+/* Optional: Prevent sort icon and th text from stacking vertically */
 .bouquet-table th .th-flex,
 .admin-feedback-table th .th-flex {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.bouquet-table th .th-text,
-.admin-feedback-table th .th-text {
-  flex: 1;
-  text-align: left;
-  font-weight: inherit;
-}
-
-.bouquet-table th .sort-icon,
-.admin-feedback-table th .sort-icon {
-  width: 11px !important;
-  height: 11px !important;
-  margin-left: 8px;
-  margin-bottom: 2px;
-  cursor: pointer;
-  align-self: flex-end;
-  transition: transform 0.18s;
+  flex-wrap: nowrap;
+  gap: 6px;
 }

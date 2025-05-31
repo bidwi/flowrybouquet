@@ -27,20 +27,22 @@ const AdminBouquet = {
           <button id="bouquet-search-btn" class="bouquet-search-btn">Cari</button>
         </div>
 
-        <table class="bouquet-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nama Buket</th>
-              <th>Gambar</th>
-              <th>Varian</th>
-              <th>Harga</th>
-              <th>Deskripsi</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="bouquet-table-body"></tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="bouquet-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nama Buket</th>
+                <th>Gambar</th>
+                <th>Varian</th>
+                <th>Harga</th>
+                <th>Deskripsi</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="bouquet-table-body"></tbody>
+          </table>
+        </div>
 
         <button id="logout-btn" class="bouquet-logout-btn">
           Logout

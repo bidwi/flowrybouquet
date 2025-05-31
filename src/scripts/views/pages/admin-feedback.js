@@ -21,20 +21,22 @@ const AdminFeedback = {
           <input type="text" id="feedback-search" class="bouquet-search-input" placeholder="Cari feedback...">
           <button id="feedback-search-btn" class="bouquet-search-btn">Cari</button>
         </div>
-        <table class="admin-feedback-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Gambar</th>
-              <th>Buket</th>
-              <th>Varian Buket</th>
-              <th>Feedback</th>
-              <th>Rating</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="admin-feedback-table-body"></tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="admin-feedback-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Gambar</th>
+                <th>Buket</th>
+                <th>Varian Buket</th>
+                <th>Feedback</th>
+                <th>Rating</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="admin-feedback-table-body"></tbody>
+          </table>
+        </div>
         <!-- Modal Edit Feedback -->
         <div id="modal-feedback" class="bouquet-modal">
           <div class="bouquet-modal-content" id="modal-feedback-content">

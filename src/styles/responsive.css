@@ -204,20 +204,40 @@
   }
 }
 
-/* Make table horizontally scrollable on small screens */
+/* Generic responsive table wrapper */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1.5rem;
+}
+
+/* Style horizontal scrollbar for all responsive tables */
+.table-responsive::-webkit-scrollbar {
+  height: 8px;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #eee;
+  border-radius: 4px;
+}
+
+/* Responsive: Make all admin tables horizontally scrollable on small screens */
 @media (max-width: 900px) {
-  .bouquet-table-wrapper {
+  .table-responsive {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  .bouquet-table {
-    display: block;
-    width: 100%;
+  .bouquet-table,
+  .admin-feedback-table {
     min-width: 600px;
+    width: 100%;
+    display: block;
   }
   .bouquet-table thead,
-  .bouquet-table tbody {
+  .bouquet-table tbody,
+  .admin-feedback-table thead,
+  .admin-feedback-table tbody {
     display: table-header-group;
     width: 100%;
   }
@@ -243,7 +263,7 @@
 }
 
 /* Responsive: Search row stack on small screens */
-@media (max-width: 600px) {
+@media (max-width: 677px) {
   .bouquet-search-row {
     flex-direction: column;
     align-items: stretch;
@@ -258,7 +278,7 @@
   }
 }
 
-/* White space for main content and table */
+/* --- Fix: Always keep margin/white space on the edge for .bouquet-page --- */
 .bouquet-page {
   background: #fff;
   border-radius: 18px;
@@ -266,40 +286,110 @@
     0 1.5px 4px 0 rgba(0, 0, 0, 0.04);
   margin: 2rem auto;
   padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 900px;
+  box-sizing: border-box;
 }
 
-.bouquet-table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  margin-bottom: 1.5rem;
+/* Remove conflicting max-width and padding rules from previous media queries */
+@media (max-width: 1100px) {
+  .bouquet-page {
+    margin: 1.2rem 4vw !important;
+    padding: 1.2rem 4vw 1.2rem 4vw !important;
+    max-width: 100vw !important;
+    border-radius: 16px;
+    box-sizing: border-box;
+  }
+}
+@media (max-width: 700px) {
+  .bouquet-page {
+    margin: 0.7rem 5vw !important;
+    padding: 0.7rem 5vw 1.2rem 5vw !important;
+    max-width: 100vw !important;
+    border-radius: 14px;
+    box-sizing: border-box;
+  }
+}
+@media (max-width: 500px) {
+  .bouquet-page {
+    margin: 0.5rem 3vw !important;
+    padding: 0.5rem 3vw 1rem 3vw !important;
+    max-width: 100vw !important;
+    border-radius: 12px;
+    box-sizing: border-box;
+  }
 }
 
-.bouquet-table {
-  background: #fafbfc;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px 0 rgba(77, 134, 156, 0.07);
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 700px;
-}
-
-.bouquet-table th,
-.bouquet-table td {
-  vertical-align: top;
+/* Responsive font size for admin page titles and links */
+.bouquet-title {
+  font-size: clamp(1.2rem, 4vw, 2.2rem);
   word-break: break-word;
-  white-space: normal;
-  max-width: 260px;
-  overflow-wrap: break-word;
-  padding: 10px 8px;
+}
+.bouquet-feedback-link,
+#bouquet-feedback-link,
+#feedback-bouquet-link {
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+  word-break: break-word;
 }
 
-/* Hide horizontal scrollbar if not needed */
-.bouquet-table-wrapper::-webkit-scrollbar {
-  height: 8px;
+/* Responsive font size for table headers and cells */
+.bouquet-table th,
+.bouquet-table td,
+.admin-feedback-table th,
+.admin-feedback-table td {
+  font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+  word-break: break-word;
 }
-.bouquet-table-wrapper::-webkit-scrollbar-thumb {
-  background: #eee;
-  border-radius: 4px;
+
+/* Responsive font size for search input and button */
+.bouquet-search-input,
+.bouquet-search-btn {
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+}
+
+/* Responsive font size for modal titles */
+.bouquet-modal-content h3 {
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
+}
+
+/* Responsive font size for action buttons */
+.bouquet-action-btn,
+.bouquet-submit-btn,
+.bouquet-cancel-btn,
+.bouquet-tambah-btn,
+.bouquet-logout-btn {
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+}
+
+/* Ensure .bouquet-header stays inside the white card and never overflows */
+.bouquet-header {
+  box-sizing: border-box;
+  width: 100%;
+  padding-top: 0.5rem;
+  padding-left: 0;
+  padding-right: 0;
+  margin-top: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* On small screens, add extra horizontal padding to .bouquet-header */
+@media (max-width: 700px) {
+  .bouquet-header {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+@media (max-width: 500px) {
+  .bouquet-header {
+    padding-left: 2vw;
+    padding-right: 2vw;
+  }
+}
+
+/* Prevent .bouquet-header children from overflowing horizontally */
+.bouquet-header > * {
+  max-width: 100%;
+  box-sizing: border-box;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
