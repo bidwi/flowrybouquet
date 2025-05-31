@@ -210,6 +210,9 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   margin-bottom: 1.5rem;
+  /* Remove any padding that could cut off scroll */
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 /* Style horizontal scrollbar for all responsive tables */
@@ -224,22 +227,23 @@
 /* Responsive: Make all admin tables horizontally scrollable on small screens */
 @media (max-width: 900px) {
   .table-responsive {
-    width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
   .bouquet-table,
   .admin-feedback-table {
-    min-width: 600px;
-    width: 100%;
-    display: block;
+    min-width: 700px; /* Make sure this is wide enough for all columns */
+    width: unset !important; /* Remove width: 100% or width: auto that may restrict scroll */
+    display: table; /* Use table layout for proper column sizing */
+    table-layout: auto;
   }
-  .bouquet-table thead,
-  .bouquet-table tbody,
-  .admin-feedback-table thead,
-  .admin-feedback-table tbody {
-    display: table-header-group;
-    width: 100%;
+}
+
+/* On very small screens, allow even smaller min-width for both tables */
+@media (max-width: 500px) {
+  .bouquet-table,
+  .admin-feedback-table {
+    min-width: 650px;
   }
 }
 
