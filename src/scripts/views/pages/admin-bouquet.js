@@ -62,7 +62,7 @@ const AdminBouquet = {
               <label>Varian:</label>
               <input type="text" id="varian" required class="bouquet-input">
 
-              <label>Harga:</label>
+              <label>Harga: (tanpa titik, contoh: 75000)</label>
               <input type="number" id="harga" required class="bouquet-input">
 
               <label>Deskripsi:</label>
@@ -403,7 +403,7 @@ const AdminBouquet = {
         icon.style.height = '11px';
         icon.style.cursor = 'pointer';
         icon.style.marginLeft = '8px';
-        icon.style.marginBottom = '2px';
+        icon.style.marginBottom = '7px';
         icon.style.transition = 'transform 0.18s';
         icon.style.alignSelf = 'flex-end';
         // Rotasi jika descending
