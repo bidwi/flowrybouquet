@@ -48,29 +48,17 @@ const LandingPage = {
         .replace(/\s+/g, '-')
         .toLowerCase()}-${varian.replace(/\s+/g, '-').toLowerCase()}`;
 
-    // Siapkan array gabungan: details.json + supabase
-    const katalog = [
-      // Data dari details.json
-      ...details.map((item) => ({
-        name: item.name,
-        variant: item.variant,
-        price: item.price,
-        image: item.image,
-        description: item.description,
-        source: 'json',
-      })),
-      // Data dari supabase
-      ...(Array.isArray(bouquets)
-        ? bouquets.map((item) => ({
-            name: item.flower,
-            variant: item.varian,
-            price: formatRupiah(item.harga),
-            image: getImageUrl(item.flower, item.varian),
-            description: item.deskripsi,
-            source: 'supabase',
-          }))
-        : []),
-    ];
+    // Hanya data dari supabase, tidak lagi gabung details.json
+    const katalog = Array.isArray(bouquets)
+      ? bouquets.map((item) => ({
+          name: item.flower,
+          variant: item.varian,
+          price: formatRupiah(item.harga),
+          image: getImageUrl(item.flower, item.varian),
+          description: item.deskripsi,
+          source: 'supabase',
+        }))
+      : [];
 
     if (katalog.length === 0) {
       cardsContainer.innerHTML =

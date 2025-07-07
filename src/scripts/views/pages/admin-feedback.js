@@ -37,6 +37,7 @@ const AdminFeedback = {
                 <th>Gambar</th>
                 <th>Buket</th>
                 <th>Varian Buket</th>
+                <th>Email</th>
                 <th>Feedback</th>
                 <th>Rating</th>
                 <th>Aksi</th>
@@ -55,6 +56,8 @@ const AdminFeedback = {
               <input type="text" id="edit-nama-buket" class="bouquet-input" readonly>
               <label>Varian:</label>
               <input type="text" id="edit-varian-buket" class="bouquet-input" readonly>
+              <label>Email:</label>
+              <input type="text" id="edit-email" class="bouquet-input" readonly>
               <label>Rating:</label>
               <input type="number" id="edit-rating" class="bouquet-input" min="1" max="5" required>
               <label>Feedback:</label>
@@ -117,7 +120,7 @@ const AdminFeedback = {
       .select('id, flower, varian');
     let { data: feedbacks } = await supabase
       .from('feedback')
-      .select('id_feedback, id_flowry, feedback, rating');
+      .select('id_feedback, id_flowry, feedback, rating, email');
 
     // Ambil daftar file gambar di bucket feedback
     const { data: files } = await supabase.storage
@@ -187,7 +190,7 @@ const AdminFeedback = {
         });
       }
       if (!rows || rows.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Belum ada data feedback.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Belum ada data feedback.</td></tr>`;
         return;
       }
       tableBody.innerHTML = rows
@@ -211,6 +214,11 @@ const AdminFeedback = {
               </td>
               <td>${bouquet.flower || '-'}</td>
               <td>${bouquet.varian || '-'}</td>
+              <td>
+                <span style="display:inline-block; min-width:180px; max-width:260px; word-break:break-all;">
+                  ${item.email || '-'}
+                </span>
+              </td>
               <td>${item.feedback || ''}</td>
               <td>${item.rating || ''}</td>
               <td>
@@ -241,6 +249,7 @@ const AdminFeedback = {
           editIdInput.value = item.id_feedback;
           editNamaBuket.value = bouquet.flower || '';
           editVarianBuket.value = bouquet.varian || '';
+          document.getElementById('edit-email').value = item.email || '';
           editRating.value = item.rating || '';
           editFeedback.value = item.feedback || '';
           if (modal) modal.style.display = 'flex';
@@ -395,6 +404,7 @@ const AdminFeedback = {
         'gambar',
         'nama_buket',
         'varian_buket',
+        'email',
         'feedback',
         'rating',
         'aksi',
@@ -424,6 +434,7 @@ const AdminFeedback = {
             String(item.id_feedback).toLowerCase().includes(keyword)) ||
           (bouquet.flower && bouquet.flower.toLowerCase().includes(keyword)) ||
           (bouquet.varian && bouquet.varian.toLowerCase().includes(keyword)) ||
+          (item.email && item.email.toLowerCase().includes(keyword)) ||
           (item.feedback && item.feedback.toLowerCase().includes(keyword)) ||
           (item.rating && String(item.rating).toLowerCase().includes(keyword))
         );

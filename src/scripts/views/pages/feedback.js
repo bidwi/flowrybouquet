@@ -2,15 +2,6 @@ import supabase from '../../globals/supabaseClient';
 
 const FeedbackPage = {
   async render() {
-    // Cek session Supabase
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session) {
-      window.location.hash = '#/login';
-      return '';
-    }
-
     // Ambil data flowry untuk dropdown
     const { data: bouquets } = await supabase.from('flowry').select('*');
 
@@ -54,15 +45,24 @@ const FeedbackPage = {
       }
     }
 
+    // Ambil session untuk email user
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) {
+      window.location.hash = '#/login';
+      return '';
+    }
+    const userEmail = session.user?.email || '';
+
     return `
       <main class="feedback-page">
         <div class="feedback-header">
           <h2 class="feedback-title">Kirim <em>Feedback</em> Buket</h2>
         </div>
         <form id="feedback-form" class="feedback-form" enctype="multipart/form-data" autocomplete="off">
-          <label for="gambar">Gambar (Maksimal 4MB) <span style="color:red">*</span></label>
-          <input type="file" id="gambar" name="gambar" accept="image/*" required />
-          <img id="preview-gambar" style="max-width:120px;display:none;margin:8px 0;" />
+          <label for="email">Email Anda <span style="color:red">*</span></label>
+          <input type="text" id="email" name="email" value="${userEmail}" readonly required />
 
           <label for="nama-buket">Nama Buket <span style="color:red">*</span></label>
           <select id="nama-buket" name="nama-buket" required ${
@@ -88,6 +88,10 @@ const FeedbackPage = {
           <label for="feedback">Deskripsi <span style="color:red">*</span></label>
           <textarea id="feedback" name="feedback" required placeholder="Tulis feedback Anda..."></textarea>
 
+          <label for="gambar">Gambar (Maksimal 4MB) <span style="color:red">*</span></label>
+          <input type="file" id="gambar" name="gambar" accept="image/*" required />
+          <img id="preview-gambar" style="max-width:120px;display:none;margin:8px 0;" />
+
           <button type="submit" class="feedback-submit-btn">Submit Form</button>
         </form>
         <div id="feedback-success" style="display:none;color:green;margin-top:1rem;">Feedback berhasil dikirim!</div>
@@ -96,15 +100,6 @@ const FeedbackPage = {
   },
 
   async afterRender() {
-    // Tambahan pengecekan session di afterRender
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session) {
-      window.location.hash = '#/login';
-      return;
-    }
-
     const bouquetsByFlower = window.__bouquetsByFlower || {};
     const namaBuket = document.getElementById('nama-buket');
     const varianWrapper = document.getElementById('varian-buket-wrapper');
@@ -256,6 +251,8 @@ const FeedbackPage = {
         const varianVal = varianInput ? varianInput.value : '';
         const ratingVal = ratingInput.value;
         const feedbackVal = document.getElementById('feedback').value.trim();
+        const emailInput = document.getElementById('email');
+        const emailVal = emailInput ? emailInput.value : '';
 
         if (!gambarFile) {
           alert('Gambar wajib diisi!');
@@ -320,6 +317,7 @@ const FeedbackPage = {
               id_flowry: id_flowry,
               rating: Number(ratingVal),
               feedback: feedbackVal,
+              email: emailVal,
             },
           ])
           .select('id_feedback');
