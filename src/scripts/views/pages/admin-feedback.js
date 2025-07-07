@@ -1,13 +1,21 @@
 import supabase from '../../globals/supabaseClient';
 
+const allowedEmails = ['billy2perakhoso@gmail.com'];
+
 const AdminFeedback = {
   async render() {
     const {
       data: { session },
     } = await supabase.auth.getSession();
 
+    // Cek email user
     if (!session) {
       window.location.hash = '#/login';
+      return '';
+    }
+    const userEmail = session.user?.email;
+    if (!allowedEmails.includes(userEmail)) {
+      window.location.hash = '#/feedback';
       return '';
     }
 
@@ -67,6 +75,13 @@ const AdminFeedback = {
       data: { session },
     } = await supabase.auth.getSession();
     if (!session) return;
+
+    // Cek email user
+    const userEmail = session.user?.email;
+    if (!allowedEmails.includes(userEmail)) {
+      window.location.hash = '#/feedback';
+      return;
+    }
 
     // Anchor ke Data Buket
     const feedbackBouquetLink = document.getElementById(

@@ -2,6 +2,15 @@ import supabase from '../../globals/supabaseClient';
 
 const FeedbackPage = {
   async render() {
+    // Cek session Supabase
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) {
+      window.location.hash = '#/login';
+      return '';
+    }
+
     // Ambil data flowry untuk dropdown
     const { data: bouquets } = await supabase.from('flowry').select('*');
 
@@ -87,6 +96,15 @@ const FeedbackPage = {
   },
 
   async afterRender() {
+    // Tambahan pengecekan session di afterRender
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) {
+      window.location.hash = '#/login';
+      return;
+    }
+
     const bouquetsByFlower = window.__bouquetsByFlower || {};
     const namaBuket = document.getElementById('nama-buket');
     const varianWrapper = document.getElementById('varian-buket-wrapper');
