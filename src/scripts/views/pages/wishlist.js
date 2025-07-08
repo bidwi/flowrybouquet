@@ -37,7 +37,45 @@ const Wishlist = {
     // if (!session) return;
 
     const wishlistContainer = document.getElementById('wishlist-container');
-    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+
+    // Cek ke Supabase untuk validasi item masih ada
+    if (wishlist.length > 0) {
+      // Ambil semua nama dan varian unik
+      const names = wishlist.map((item) => item.name);
+      const variants = wishlist.map((item) => item.variant);
+
+      // Query semua data yang ada di wishlist
+      const { data: bouquetData } = await supabase
+        .from('flowry')
+        .select('flower, varian');
+
+      // Filter wishlist yang masih ada di database
+      wishlist = wishlist.filter((item) =>
+        bouquetData?.some(
+          (row) =>
+            row.flower === item.name &&
+            row.varian === item.variant
+        )
+      );
+      // Update localStorage jika ada perubahan
+      localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    }
+
+    // Helper untuk generate image url dari name & variant
+    const getImageUrl = (name, variant) =>
+      `https://agrkvdjeigkdgdjapvuo.supabase.co/storage/v1/object/public/photo/${name
+        .replace(/\s+/g, '-')
+        .toLowerCase()}-${variant
+        .replace(/\s+/g, '-')
+        .toLowerCase()}?t=${Date.now()}`;
+
+    // Update semua item wishlist agar image selalu dari supabase storage
+    wishlist = wishlist.map((item) => ({
+      ...item,
+      image: getImageUrl(item.name, item.variant),
+    }));
+
     const modal = document.getElementById('confirmation-modal');
     const closeModal = document.getElementById('close-modal');
     const viewInfoButton = document.getElementById('view-info');

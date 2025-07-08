@@ -1,6 +1,10 @@
 import supabase from '../../globals/supabaseClient';
 
-const allowedEmails = ['billy2perakhoso@gmail.com'];
+// Ambil allowedEmails dari environment variable
+const allowedEmails = (process.env.ALLOWED_ADMIN_EMAILS || '')
+  .split(',')
+  .map((e) => e.trim())
+  .filter(Boolean);
 
 const AdminFeedback = {
   async render() {

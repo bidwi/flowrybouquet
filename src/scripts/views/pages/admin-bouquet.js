@@ -1,6 +1,10 @@
 import supabase from '../../globals/supabaseClient';
 
-const allowedEmails = ['billy2perakhoso@gmail.com'];
+// Ambil allowedEmails dari environment variable
+const allowedEmails = (process.env.ALLOWED_ADMIN_EMAILS || '')
+  .split(',')
+  .map((e) => e.trim())
+  .filter(Boolean);
 
 const AdminBouquet = {
   async render() {
@@ -144,10 +148,11 @@ const AdminBouquet = {
 
     // Helper untuk mendapatkan URL gambar
     const getImageUrl = (flower, varian) => {
+      // Tambahkan timestamp agar tidak cache
       return `https://agrkvdjeigkdgdjapvuo.supabase.co/storage/v1/object/public/${bucketName}/${getFileName(
         flower,
         varian
-      )}`;
+      )}?t=${Date.now()}`;
     };
 
     const openModal = async (editData = null) => {
@@ -170,8 +175,8 @@ const AdminBouquet = {
           previewGambar.style.display = 'none';
           previewGambar.src = '';
         } else {
-          const url = URL.createObjectURL(blob);
-          previewGambar.src = url;
+          // Gunakan getImageUrl agar ada timestamp
+          previewGambar.src = getImageUrl(editData.flower, editData.varian);
           previewGambar.style.display = 'block';
         }
       } else {
@@ -263,6 +268,17 @@ const AdminBouquet = {
 
       // Upload gambar baru kalau ada file baru
       if (gambarFile) {
+        // Jika edit, hapus gambar lama terlebih dahulu (jika ada dan nama file berbeda)
+        if (editId) {
+          // Hapus gambar lama jika nama file berubah atau memang ada file lama
+          if (oldFileName && oldFileName !== newFileName) {
+            await supabase.storage.from(bucketName).remove([oldFileName]);
+          } else if (oldFileName && oldFileName === newFileName) {
+            // Jika nama file sama, hapus dulu file lama agar tidak duplikat
+            await supabase.storage.from(bucketName).remove([oldFileName]);
+          }
+        }
+
         const { error: uploadError } = await supabase.storage
           .from(bucketName)
           .upload(newFileName, gambarFile, { upsert: true });

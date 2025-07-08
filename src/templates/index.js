@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const footerContact = document.getElementById('footer-contact');
 
   // Ambil nomor WhatsApp dari process.env
-  const phoneNumber = process.env.VITE_WHATSAPP_PHONE_NUMBER;
+  const phoneNumber = process.env.WHATSAPP_PHONE_NUMBER;
 
   if (phoneNumber) {
     // Buat link WhatsApp

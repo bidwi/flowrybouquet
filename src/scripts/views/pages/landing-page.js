@@ -46,7 +46,9 @@ const LandingPage = {
     const getImageUrl = (flower, varian) =>
       `https://agrkvdjeigkdgdjapvuo.supabase.co/storage/v1/object/public/photo/${flower
         .replace(/\s+/g, '-')
-        .toLowerCase()}-${varian.replace(/\s+/g, '-').toLowerCase()}`;
+        .toLowerCase()}-${varian
+        .replace(/\s+/g, '-')
+        .toLowerCase()}?t=${Date.now()}`;
 
     // Hanya data dari supabase, tidak lagi gabung details.json
     const katalog = Array.isArray(bouquets)

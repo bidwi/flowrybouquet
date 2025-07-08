@@ -15,6 +15,14 @@ const Detail = {
     const itemName = decodeURIComponent(hash[2]);
     let item = details.find((detail) => detail.name === itemName);
 
+    // Helper untuk generate image url dari name & variant
+    const getImageUrl = (name, variant) =>
+      `https://agrkvdjeigkdgdjapvuo.supabase.co/storage/v1/object/public/photo/${name
+        .replace(/\s+/g, '-')
+        .toLowerCase()}-${variant
+        .replace(/\s+/g, '-')
+        .toLowerCase()}?t=${Date.now()}`;
+
     // Jika tidak ditemukan di details.json, cari di Supabase
     if (!item) {
       // Query ke Supabase
@@ -27,17 +35,27 @@ const Detail = {
       if (!error && data) {
         // Format harga dan gambar
         const formatRupiah = (angka) => 'Rp' + angka.toLocaleString('id-ID');
-        const getImageUrl = (flower) =>
-          `https://agrkvdjeigkdgdjapvuo.supabase.co/storage/v1/object/public/photo/${flower
-            .replace(/\s+/g, '-')
-            .toLowerCase()}`;
         item = {
           name: data.flower,
           variant: data.varian,
           price: formatRupiah(data.harga),
-          image: getImageUrl(data.flower),
+          image: getImageUrl(data.flower, data.varian),
           description: data.deskripsi,
         };
+      }
+    } else {
+      // Jika ditemukan di details.json, cek juga ke Supabase
+      const { data: bouquetData } = await supabase
+        .from('flowry')
+        .select('flower, varian')
+        .eq('flower', item.name)
+        .eq('varian', item.variant)
+        .single();
+
+      if (!bouquetData) {
+        item = null;
+      } else {
+        item.image = getImageUrl(item.name, item.variant);
       }
     }
 
@@ -93,7 +111,7 @@ const Detail = {
   },
 
   buyViaWhatsApp(item) {
-    const phoneNumber = process.env.VITE_WHATSAPP_PHONE_NUMBER;
+    const phoneNumber = process.env.WHATSAPP_PHONE_NUMBER;
     const message = `Halo, saya ingin membeli ${item.name}, varian ${item.variant}`;
     const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
       message

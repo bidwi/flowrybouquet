@@ -44,14 +44,14 @@
   {
     "name": "Bouquet Polaroid",
     "variant": "Polaroid & Bunga",
-    "description": "Bouquet ini menggabungkan keindahan bunga dengan kenangan manis dalam bentuk polaroid. Setiap polaroid yang disertakan memberikan kesan pribadi, menjadikannya pilihan tepat untuk memberi hadiah yang penuh makna dan kenangan tak terlupakan.",
+    "description": "Bouquet ini menggabungkan keindahan bunga dengan kenangan manis dalam bentuk polaroid. Setiap polaroid yang dibuat dapat memberikan kesan pribadi, menjadikannya pilihan tepat untuk hadiah yang penuh makna dan kenangan yang tak terlupakan.",
     "price": "Rp100.000",
     "image": "/bouquet/polaroid.jpg"
   },
   {
     "name": "Bouquet Uang",
     "variant": "Uang Lima Ribu",
-    "description": "Bouquet ini mengandung uang pecahan Rp5.000 yang disusun dengan cermat, memberikan hadiah yang praktis namun tetap berkesan. Cocok untuk berbagai acara, bouquet uang ini akan memberi kebahagiaan dan manfaat langsung bagi penerimanya.",
+    "description": "Bouquet ini berisi uang pecahan Rp5.000 yang disusun dengan teliti, memberikan hadiah yang praktis namun tetap berkesan. Cocok untuk berbagai acara. Bouquet ini bisa dikustom dengan nominal uang yang diinginkan oleh para pembeli.",
     "price": "Rp100.000",
     "image": "/bouquet/uang.jpg"
   }

@@ -45,10 +45,13 @@ module.exports = {
       ],
     }),
     new webpack.DefinePlugin({
-      'process.env.VITE_WHATSAPP_PHONE_NUMBER': JSON.stringify(
-        process.env.VITE_WHATSAPP_PHONE_NUMBER
+      'process.env.WHATSAPP_PHONE_NUMBER': JSON.stringify(
+        process.env.WHATSAPP_PHONE_NUMBER
       ),
       'process.env.API_KEY': JSON.stringify(process.env.API_KEY),
+      'process.env.ALLOWED_ADMIN_EMAILS': JSON.stringify(
+        process.env.ALLOWED_ADMIN_EMAILS
+      ),
       // 'process.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL),
     }),
   ],
