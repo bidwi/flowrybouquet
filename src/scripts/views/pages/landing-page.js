@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import details from '../../data/details.json';
 import supabase from '../../globals/supabaseClient';
 
@@ -96,7 +97,7 @@ const LandingPage = {
     return `
       <article class="card-wishlist" data-name="${name}" data-variant="${variant}" data-price="${price}" data-image="${image}" data-description="${description}">
         <section>
-          <img class="image-card" src="${image}" alt="${name}">
+          <img class="image-card" src="${image}" alt="${name}" loading="lazy">
           <article class="container">
             <h4 class="judul-buket"><b>${name}</b></h4> 
             <p class="varian-buket">Varian: ${variant}</p>

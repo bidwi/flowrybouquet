@@ -156,6 +156,7 @@ const AdminFeedback = {
     const searchBtn = document.getElementById('feedback-search-btn');
     const tableBody = document.getElementById('admin-feedback-table-body');
 
+    // eslint-disable-next-line no-unused-vars
     function renderTable(data = '', keyword = '') {
       if (!tableBody) return;
       let rows = data || [];
@@ -211,7 +212,7 @@ const AdminFeedback = {
                 <div class="admin-feedback-img-center">
                   ${
                     imageUrl
-                      ? `<img src="${imageUrl}" alt="feedback-img" class="admin-feedback-table-img" />`
+                      ? `<img src="${imageUrl}" loading="lazy" alt="feedback-img" class="admin-feedback-table-img" />`
                       : '-'
                   }
                 </div>

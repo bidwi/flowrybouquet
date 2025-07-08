@@ -68,7 +68,7 @@ const Detail = {
     const detailContainer = document.getElementById('detail-container');
     detailContainer.innerHTML = `
       <div class="detail-content">
-        <img class="detail-image" src="${item.image}" alt="${item.name}">
+        <img class="detail-image" loading="lazy" src="${item.image}" alt="${item.name}">
         <div class="detail-info">
           <h1>${item.name}</h1>
           <h2>${item.variant}</h2>

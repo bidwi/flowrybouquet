@@ -42,7 +42,9 @@ const Wishlist = {
     // Cek ke Supabase untuk validasi item masih ada
     if (wishlist.length > 0) {
       // Ambil semua nama dan varian unik
+      // eslint-disable-next-line no-unused-vars
       const names = wishlist.map((item) => item.name);
+      // eslint-disable-next-line no-unused-vars
       const variants = wishlist.map((item) => item.variant);
 
       // Query semua data yang ada di wishlist
@@ -53,9 +55,7 @@ const Wishlist = {
       // Filter wishlist yang masih ada di database
       wishlist = wishlist.filter((item) =>
         bouquetData?.some(
-          (row) =>
-            row.flower === item.name &&
-            row.varian === item.variant
+          (row) => row.flower === item.name && row.varian === item.variant
         )
       );
       // Update localStorage jika ada perubahan
@@ -90,7 +90,7 @@ const Wishlist = {
           (item, index) => `
         <article class="card-wishlist" data-index="${index}" data-name="${item.name}">
           <section>
-            <img class="image-card" src="${item.image}" alt="${item.name}">
+            <img class="image-card" loading="lazy" src="${item.image}" alt="${item.name}">
             <div class="container">
               <h4><b>${item.name}</b></h4>
               <p>Varian: ${item.variant}</p>

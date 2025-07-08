@@ -83,7 +83,7 @@ const AdminBouquet = {
               <label>Gambar:</label>
               <div class="bouquet-file-preview-row">
                 <input type="file" id="gambar" accept="image/*" class="bouquet-input" style="margin-bottom:0;">
-                <img id="preview-gambar" src="" class="bouquet-preview-gambar" style="display:none;">
+                <img id="preview-gambar" src="" class="bouquet-preview-gambar" style="display:none;" loading="lazy">
               </div>
 
               <div style="margin-top: 1rem;">
@@ -167,6 +167,7 @@ const AdminBouquet = {
 
         // Coba download gambar dan preview (jika ada)
         const filePath = getFileName(editData.flower, editData.varian);
+        // eslint-disable-next-line no-unused-vars
         const { data: blob, error: downloadError } = await supabase.storage
           .from(bucketName)
           .download(filePath);
@@ -527,7 +528,7 @@ const AdminBouquet = {
               <td>${item.flower}</td>
               <td>
                 <div class="bouquet-img-center">
-                  <img src="${imageUrl}" alt="${
+                  <img src="${imageUrl}" loading="lazy" alt="${
             item.flower
           }" class="bouquet-table-img" />
                 </div>

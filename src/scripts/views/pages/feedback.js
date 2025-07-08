@@ -41,6 +41,7 @@ const FeedbackPage = {
     if (hash[1] === 'detail' && hash[2]) {
       const itemName = decodeURIComponent(hash[2]);
       if (itemName.includes('--')) {
+        // eslint-disable-next-line no-unused-vars
         [autofillName, autofillVarian] = itemName.split('--');
       }
     }
@@ -79,7 +80,7 @@ const FeedbackPage = {
             ${[1, 2, 3, 4, 5]
               .map(
                 (i) =>
-                  `<img src="../icons/star.png" data-rate="${i}" class="star-icon" alt="star" />`
+                  `<img src="../icons/star.png" loading="lazy" data-rate="${i}" class="star-icon" alt="star" />`
               )
               .join('')}
           </div>
@@ -90,7 +91,7 @@ const FeedbackPage = {
 
           <label for="gambar">Gambar (Maksimal 4MB) <span style="color:red">*</span></label>
           <input type="file" id="gambar" name="gambar" accept="image/*" required />
-          <img id="preview-gambar" style="max-width:120px;display:none;margin:8px 0;" />
+          <img id="preview-gambar" loading="lazy" style="max-width:120px;display:none;margin:8px 0;" />
 
           <button type="submit" class="feedback-submit-btn">Submit Form</button>
         </form>
@@ -167,6 +168,7 @@ const FeedbackPage = {
       renderVarianInput(autofillName);
       namaBuket.disabled = true;
     } else if (namaBuket) {
+      // eslint-disable-next-line prefer-arrow-callback
       namaBuket.addEventListener('change', function () {
         selectedFlower = namaBuket.value;
         renderVarianInput(selectedFlower);
@@ -174,6 +176,7 @@ const FeedbackPage = {
         // Jika dropdown, listen perubahan varian
         const varianSelect = document.getElementById('varian-buket');
         if (varianSelect && varianSelect.tagName === 'SELECT') {
+          // eslint-disable-next-line prefer-arrow-callback
           varianSelect.addEventListener('change', function () {
             selectedVarian = varianSelect.value;
             selectedIdFlowry =
@@ -194,6 +197,7 @@ const FeedbackPage = {
         (v) => v.varian === autofillVarian
       );
       if (match) {
+        // eslint-disable-next-line no-unused-vars
         selectedVarian = match.varian;
         selectedIdFlowry = match.id;
       }
