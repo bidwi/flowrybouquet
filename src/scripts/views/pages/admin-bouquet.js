@@ -409,6 +409,7 @@ const AdminBouquet = {
           flex.style.alignItems = 'center';
           flex.style.justifyContent = 'space-between';
           flex.style.width = '100%';
+          // flex.style.marginLeft = 'px'; // Untuk mengimbangi padding th
           // Pindahkan semua child ke flex
           while (th.firstChild) flex.appendChild(th.firstChild);
           th.appendChild(flex);
@@ -421,6 +422,7 @@ const AdminBouquet = {
           textSpan.style.flex = '1';
           textSpan.style.textAlign = 'left';
           textSpan.style.fontWeight = 'inherit';
+          textSpan.style.marginLeft = '6.24px'; // Untuk mengimbangi padding th
           textSpan.appendChild(flex.firstChild);
           flex.appendChild(textSpan);
         }
@@ -521,7 +523,7 @@ const AdminBouquet = {
 
           return `
             <tr>
-              <td>${item.id}</td>
+              <td style="text-align:center">${item.id}</td>
               <td>${item.flower}</td>
               <td>
                 <div class="bouquet-img-center">
