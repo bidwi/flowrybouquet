@@ -87,7 +87,10 @@ const LandingPage = {
         // Cegah klik tombol wishlist memicu detail
         if (e.target.classList.contains('wishlist-btn')) return;
         const name = card.getAttribute('data-name');
-        window.location.hash = `#/detail/${encodeURIComponent(name)}`;
+        const variant = card.getAttribute('data-variant');
+        window.location.hash = `#/detail/${encodeURIComponent(
+          name
+        )}--${encodeURIComponent(variant)}`;
       });
     });
   },

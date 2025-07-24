@@ -12,8 +12,21 @@ const Detail = {
 
   async afterRender() {
     const hash = window.location.hash.split('/');
-    const itemName = decodeURIComponent(hash[2]);
-    let item = details.find((detail) => detail.name === itemName);
+    // Ambil nama dan varian dari hash (format: #/detail/{name}--{variant})
+    let itemName = '';
+    let itemVariant = '';
+    if (hash[2] && hash[2].includes('--')) {
+      [itemName, itemVariant] = hash[2].split('--').map(decodeURIComponent);
+    } else {
+      itemName = decodeURIComponent(hash[2]);
+      itemVariant = '';
+    }
+
+    let item = details.find(
+      (detail) =>
+        detail.name === itemName &&
+        (itemVariant ? detail.variant === itemVariant : true)
+    );
 
     // Helper untuk generate image url dari name & variant
     const getImageUrl = (name, variant) =>
@@ -26,11 +39,9 @@ const Detail = {
     // Jika tidak ditemukan di details.json, cari di Supabase
     if (!item) {
       // Query ke Supabase
-      const { data, error } = await supabase
-        .from('flowry')
-        .select('*')
-        .eq('flower', itemName)
-        .single();
+      let query = supabase.from('flowry').select('*').eq('flower', itemName);
+      if (itemVariant) query = query.eq('varian', itemVariant);
+      const { data, error } = await query.single();
 
       if (!error && data) {
         // Format harga dan gambar
@@ -45,12 +56,12 @@ const Detail = {
       }
     } else {
       // Jika ditemukan di details.json, cek juga ke Supabase
-      const { data: bouquetData } = await supabase
+      let query = supabase
         .from('flowry')
         .select('flower, varian')
         .eq('flower', item.name)
-        .eq('varian', item.variant)
-        .single();
+        .eq('varian', item.variant);
+      const { data: bouquetData } = await query.single();
 
       if (!bouquetData) {
         item = null;
