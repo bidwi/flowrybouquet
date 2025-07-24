@@ -200,7 +200,7 @@
 @media (max-width: 1024px) {
   .bouquet-table th,
   .bouquet-table td {
-    padding: 5px 2px;
+    padding: 10px 6.2px;
     font-size: 0.93em;
     max-width: 115px;
     white-space: normal;
@@ -352,7 +352,7 @@
 .bouquet-feedback-link,
 #bouquet-feedback-link,
 #feedback-bouquet-link {
-  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+  font-size: clamp(0.87rem, 2.5vw, 1.2rem);
   word-break: break-word;
 }
 
@@ -392,6 +392,7 @@
   padding-top: 0.2rem;
   padding-left: 0;
   padding-right: 0;
+  padding-bottom: 8px;
   margin-top: 0;
   margin-left: 0;
   margin-right: 0;
@@ -403,7 +404,27 @@
     /* padding-left: 0.5rem; */
     padding-right: 0.5rem;
   }
+
+  .detail-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .detail-buttons button:nth-child(4),
+  .detail-buttons button:nth-child(5) {
+    grid-column: span 1;
+  }
+
+  .detail-buttons button:nth-child(4) {
+    grid-column-start: 1;
+  }
+  .detail-buttons button:nth-child(5) {
+    grid-column-start: 2;
+  }
 }
+
 @media (max-width: 500px) {
   .bouquet-header {
     padding-left: 1px;
