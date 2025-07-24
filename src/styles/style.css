@@ -548,7 +548,9 @@ body {
 
 .wishlist-button,
 .buy-whatsapp,
-.buy-instagram {
+.buy-instagram,
+.buy-facebook,
+.feedback-button {
   padding: 10px 16px;
   font-size: 16px;
   border: none;
@@ -558,12 +560,27 @@ body {
   font-weight: bold;
 }
 
+.feedback-button {
+  background-color: #4d869c;
+}
+.feedback-button:hover {
+  background-color: #37647a;
+}
+
 .wishlist-button {
   background-color: #007bff; /* Biru untuk Wishlist */
 }
 
 .wishlist-button:hover {
   background-color: #0056b3; /* Biru lebih gelap */
+}
+
+.buy-facebook {
+  background-color: #3b5998; /* Biru khas Facebook */
+}
+
+.buy-facebook:hover {
+  background-color: #1a356e; /* Biru lebih gelap */
 }
 
 .buy-whatsapp {
@@ -954,6 +971,15 @@ footer p a:hover {
   text-align: center;
   font-weight: bold;
   color: #4caf50 !important;
+  margin-top: 1.5rem;
+  font-size: 1.1em;
+  letter-spacing: 0.5px;
+}
+
+#feedback-loading {
+  text-align: center;
+  font-weight: bold;
+  color: rgb(255, 98, 0) !important;
   margin-top: 1.5rem;
   font-size: 1.1em;
   letter-spacing: 0.5px;

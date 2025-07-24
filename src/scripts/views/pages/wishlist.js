@@ -106,14 +106,16 @@ const Wishlist = {
       document.querySelectorAll('.card-wishlist').forEach((card) => {
         card.addEventListener('click', () => {
           const index = card.getAttribute('data-index');
-          const itemName = card.getAttribute('data-name');
 
           // Tampilkan modal konfirmasi
           modal.style.display = 'block';
 
           // Klik tombol 'Lihat Info'
           viewInfoButton.onclick = () => {
-            window.location.hash = `#/detail/${encodeURIComponent(itemName)}`;
+            const item = wishlist[index]; // Ambil item berdasarkan index
+            window.location.hash = `#/detail/${encodeURIComponent(
+              item.name
+            )}--${encodeURIComponent(item.variant)}`;
             modal.style.display = 'none';
           };
 

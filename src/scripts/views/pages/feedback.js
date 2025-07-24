@@ -62,9 +62,8 @@ const FeedbackPage = {
           <h2 class="feedback-title">Kirim <em>Feedback</em> Buket</h2>
         </div>
         <form id="feedback-form" class="feedback-form" enctype="multipart/form-data" autocomplete="off">
-          <label for="email">Email Anda <span style="color:red">*</span></label>
-          <input type="text" id="email" name="email" value="${userEmail}" readonly required />
-
+        <label for="email">Email Anda <span style="color:red">*</span></label>
+        <input type="text" id="email" name="email" value="${userEmail}" readonly required />
           <label for="nama-buket">Nama Buket <span style="color:red">*</span></label>
           <select id="nama-buket" name="nama-buket" required ${
             autofillName ? 'disabled' : ''
@@ -96,6 +95,7 @@ const FeedbackPage = {
           <button type="submit" class="feedback-submit-btn">Submit Form</button>
         </form>
         <div id="feedback-success" style="display:none;color:green;margin-top:1rem;">Feedback berhasil dikirim!</div>
+        <div id="feedback-loading" style="display:none;color:blue;margin-top:0.5rem;">Tunggu sebentar..</div>
       </main>
     `;
   },
@@ -257,10 +257,13 @@ const FeedbackPage = {
         const feedbackVal = document.getElementById('feedback').value.trim();
         const emailInput = document.getElementById('email');
         const emailVal = emailInput ? emailInput.value : '';
+        const feedbackLoading = document.getElementById('feedback-loading');
+        if (feedbackLoading) feedbackLoading.style.display = 'block';
 
         if (!gambarFile) {
           alert('Gambar wajib diisi!');
           gambarInput.focus();
+          if (feedbackLoading) feedbackLoading.style.display = 'none';
           return;
         }
         if (
@@ -271,29 +274,35 @@ const FeedbackPage = {
           gambarInput.value = '';
           previewGambar.src = '';
           previewGambar.style.display = 'none';
+          if (feedbackLoading) feedbackLoading.style.display = 'none';
           return;
         }
         if (!namaBuketVal) {
           alert('Nama buket wajib dipilih!');
           namaBuket.focus();
+          if (feedbackLoading) feedbackLoading.style.display = 'none';
           return;
         }
         if (!varianVal) {
           alert('Varian buket wajib dipilih!');
           varianInput?.focus();
+          if (feedbackLoading) feedbackLoading.style.display = 'none';
           return;
         }
         if (!ratingVal) {
           alert('Pilih rating terlebih dahulu!');
+          if (feedbackLoading) feedbackLoading.style.display = 'none';
           return;
         }
         if (!feedbackVal) {
           alert('Deskripsi wajib diisi!');
           document.getElementById('feedback').focus();
+          if (feedbackLoading) feedbackLoading.style.display = 'none';
           return;
         }
         if (gambarFile.size > 4 * 1024 * 1024) {
           alert('Ukuran gambar maksimal 4MB!');
+          if (feedbackLoading) feedbackLoading.style.display = 'none';
           return;
         }
 
@@ -351,6 +360,7 @@ const FeedbackPage = {
           return;
         }
 
+        if (feedbackLoading) feedbackLoading.style.display = 'none';
         form.reset();
         updateStars(0);
         if (previewGambar) previewGambar.style.display = 'none';

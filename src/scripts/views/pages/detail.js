@@ -86,9 +86,11 @@ const Detail = {
           <h3>${item.price}</h3>
           <p>${item.description}</p>
           <div class="detail-buttons">
-            <button id="add-to-wishlist" class="wishlist-button">Tambah ke Wishlist</button>
-            <button id="buy-via-instagram" class="buy-instagram">Beli via Instagram</button>
-            <button id="buy-via-whatsapp" class="buy-whatsapp">Beli via WhatsApp</button>
+          <button id="buy-via-instagram" class="buy-instagram">Beli di IG</button>
+          <button id="buy-via-whatsapp" class="buy-whatsapp">Beli di WA</button>
+          <button id="buy-via-facebook" class="buy-facebook">Beli di FB</button>
+          <button id="add-to-wishlist" class="wishlist-button">Wishlist</button>
+          <button id="feedback-btn" class="feedback-button">Feedback</button>
           </div>
         </div>
       </div>
@@ -103,14 +105,27 @@ const Detail = {
       .addEventListener('click', () => this.buyViaWhatsApp(item));
 
     document
+      .getElementById('buy-via-facebook')
+      .addEventListener('click', () => this.buyViaFacebook(item));
+
+    document
       .getElementById('buy-via-instagram')
       .addEventListener('click', () => this.buyViaInstagram(item));
+
+    document.getElementById('feedback-btn').addEventListener('click', () => {
+      localStorage.setItem(
+        'feedback_autofill',
+        JSON.stringify({ name: item.name, variant: item.variant })
+      );
+      window.location.hash = '#/feedback';
+    });
   },
 
   addToWishlist(item) {
     let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
     const alreadyInWishlist = wishlist.some(
-      (wishlistItem) => wishlistItem.name === item.name
+      (wishlistItem) =>
+        wishlistItem.name === item.name && wishlistItem.variant === item.variant
     );
 
     if (!alreadyInWishlist) {
@@ -135,6 +150,13 @@ const Detail = {
     const instagramURL = `https://ig.me/m/${instagramUsername}`;
 
     window.open(instagramURL);
+  },
+
+  buyViaFacebook() {
+    const facebookPage = 'fitri.maldalifani.7'; // Ganti dengan username Facebook tujuan
+    const facebookURL = `https://facebook.com/${facebookPage}`;
+
+    window.open(facebookURL);
   },
 };
 
