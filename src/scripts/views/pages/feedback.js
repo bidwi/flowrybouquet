@@ -92,10 +92,11 @@ const FeedbackPage = {
           <input type="file" id="gambar" name="gambar" accept="image/*" required />
           <img id="preview-gambar" loading="lazy" style="max-width:120px;display:none;margin:8px 0;" />
 
+          <div id="feedback-loading" style="display:none;color:blue;margin-top:0.5rem;">Tunggu sebentar..</div>
+          <div id="feedback-success" style="display:none;color:green;margin-top:1rem;">Feedback berhasil dikirim!</div>
+          
           <button type="submit" class="feedback-submit-btn">Submit Form</button>
         </form>
-        <div id="feedback-success" style="display:none;color:green;margin-top:1rem;">Feedback berhasil dikirim!</div>
-        <div id="feedback-loading" style="display:none;color:blue;margin-top:0.5rem;">Tunggu sebentar..</div>
       </main>
     `;
   },
