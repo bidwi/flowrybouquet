@@ -120,8 +120,18 @@ const Detail = {
         .list('', { limit: 1000 });
 
       const container = document.getElementById('feedback-list-container');
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        container.innerHTML = `<a href="#/login"><p class="no-feedback" style="text-decoration:none">Login untuk lihat feedback. Klik di sini untuk login.</p></a>`;
+        return; // Jangan render feedback kalau belum login
+      }
       if (!feedbacks || feedbacks.length === 0) {
-        container.innerHTML = '<p class="no-feedback"></p>';
+        container.innerHTML =
+          '<p class="no-feedback">Belum ada feedback, silakan berikan feedback pertama Anda!</p>';
         return;
       }
 

@@ -444,3 +444,27 @@
   word-break: break-word;
   overflow-wrap: break-word;
 }
+
+@media screen and (max-width: 500px) {
+  .feedback-title .part-kirim,
+  .feedback-title .part-feedback {
+    display: block; /* Membuat setiap bagian memulai baris baru */
+    line-height: 1.2; /* Sesuaikan sesuai kebutuhan untuk jarak antar baris */
+    margin-bottom: 5px; /* Memberi sedikit jarak di bawah setiap baris, sesuaikan sesuai kebutuhan */
+  }
+
+  .feedback-title {
+    margin-bottom: 0; /* Hapus margin bawah untuk baris terakhir jika tidak diperlukan */
+  }
+
+  /* Opsional: Jika Anda ingin menghilangkan spasi kosong yang mungkin muncul di antara span jika ada di HTML asli */
+  .feedback-title {
+    font-size: 1.7rem; /* Contoh: kembalikan ukuran font jika ada yang dikomentari sebelumnya */
+    white-space: normal; /* Memastikan teks dapat membungkus secara normal */
+  }
+
+  .feedback-logout-btn {
+    margin-top: -30px !important;
+    /* padding-top: 800px !important; */
+  }
+}

@@ -61,7 +61,11 @@ const FeedbackPage = {
     return `
       <main class="feedback-page">
         <div class="feedback-header">
-          <h2 class="feedback-title">Kirim <em>Feedback</em> Buket</h2>
+          <h2 class="feedback-title">
+            <span class="part-kirim">Kirim</span>
+            <span class="part-feedback"><em>Feedback</em></span>
+          </h2>
+          <button id="logout-btn" class="bouquet-logout-btn feedback-logout-btn" style="margin-top:-10px">Logout</button>
         </div>
         <form id="feedback-form" class="feedback-form" enctype="multipart/form-data" autocomplete="off">
         <label for="email">Email Anda <span style="color:red">*</span></label>
@@ -227,6 +231,16 @@ const FeedbackPage = {
         }
       });
     }
+
+    const logoutBtn = document.getElementById('logout-btn');
+    logoutBtn.addEventListener('click', async () => {
+      const { error } = await supabase.auth.signOut();
+      if (!error) {
+        window.location.href = '#/login'; // redirect ke login page
+      } else {
+        console.error('Logout gagal:', error.message);
+      }
+    });
 
     // Rating bintang
     let rating = 0;
