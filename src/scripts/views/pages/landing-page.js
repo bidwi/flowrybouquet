@@ -60,7 +60,7 @@ const LandingPage = {
           variant: item.varian,
           price: formatRupiah(item.harga),
           image: getImageUrl(item.flower, item.varian),
-          description: item.deskripsi,
+          // description: item.deskripsi,
           source: 'supabase',
         }))
       : [];
@@ -77,8 +77,8 @@ const LandingPage = {
           item.name,
           item.variant,
           item.price,
-          item.image,
-          item.description
+          item.image
+          // item.description
         )
       )
       .join('');
@@ -97,10 +97,10 @@ const LandingPage = {
     });
   },
 
-  createCard(name, variant, price, image, description) {
+  createCard(name, variant, price, image /* description */) {
     // Simpan data di attribute agar mudah diambil saat klik wishlist
     return `
-      <article class="card-wishlist" data-name="${name}" data-variant="${variant}" data-price="${price}" data-image="${image}" data-description="${description}">
+      <article class="card-wishlist" data-name="${name}" data-variant="${variant}" data-price="${price}" data-image="${image}" data-description="">
         <section>
           <img class="image-card lazyload" data-src="${image}" alt="${name}" loading="lazy">
           <article class="container">

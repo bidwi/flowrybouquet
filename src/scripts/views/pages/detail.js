@@ -80,23 +80,92 @@ const Detail = {
 
     const detailContainer = document.getElementById('detail-container');
     detailContainer.innerHTML = `
-      <div class="detail-content">
-        <img class="detail-image lazyload" data-src="${item.image}" alt="${item.name}">
-        <div class="detail-info">
-          <h1>${item.name}</h1>
-          <h2>${item.variant}</h2>
-          <h3>${item.price}</h3>
-          <p>${item.description}</p>
-          <div class="detail-buttons">
-          <button id="buy-via-instagram" class="buy-instagram">Beli di IG</button>
-          <button id="buy-via-whatsapp" class="buy-whatsapp">Beli di WA</button>
-          <button id="buy-via-facebook" class="buy-facebook">Beli di FB</button>
-          <button id="add-to-wishlist" class="wishlist-button">Wishlist</button>
-          <button id="feedback-btn" class="feedback-button">Feedback</button>
-          </div>
+  <div class="detail-content">
+    <img class="detail-image lazyload" data-src="${item.image}" alt="${item.name}">
+    <div class="detail-info">
+      <h1>${item.name}</h1>
+      <h2>${item.variant}</h2>
+      <h3>${item.price}</h3>
+      <p>${item.description}</p>
+      <div class="detail-buttons">
+        <button id="buy-via-instagram" class="buy-instagram">Beli di IG</button>
+        <button id="buy-via-whatsapp" class="buy-whatsapp">Beli di WA</button>
+        <button id="buy-via-facebook" class="buy-facebook">Beli di FB</button>
+        <button id="add-to-wishlist" class="wishlist-button">Wishlist</button>
+        <button id="feedback-btn" class="feedback-button">Feedback</button>
+      </div>
+    </div>
+  </div>
+  <div id="feedback-list-container" class="feedback-list"></div>
+`;
+
+    // Fetch dan render feedback
+    const fetchAndRenderFeedback = async () => {
+      const { data: bouquetData } = await supabase
+        .from('flowry')
+        .select('id')
+        .eq('flower', item.name)
+        .eq('varian', item.variant)
+        .single();
+
+      if (!bouquetData) return;
+
+      const { data: feedbacks } = await supabase
+        .from('feedback')
+        .select('id_feedback, feedback, rating, email')
+        .eq('id_flowry', bouquetData.id);
+
+      const { data: files } = await supabase.storage
+        .from('feedback')
+        .list('', { limit: 1000 });
+
+      const container = document.getElementById('feedback-list-container');
+      if (!feedbacks || feedbacks.length === 0) {
+        container.innerHTML = '<p class="no-feedback"></p>';
+        return;
+      }
+
+      const getImage = (id) => {
+        const file = files?.find((f) => f.name.startsWith(id));
+        return file
+          ? `https://agrkvdjeigkdgdjapvuo.supabase.co/storage/v1/object/public/feedback/${file.name}`
+          : '';
+      };
+
+      container.innerHTML = feedbacks
+        .map(
+          (f) => `
+      <div class="feedback-card">
+        <div class="feedback-img-wrapper">
+          ${
+            getImage(f.id_feedback)
+              ? `<img data-src="${getImage(
+                  f.id_feedback
+                )}" class="lazyload" alt="Feedback Image" />`
+              : ''
+          }
+        </div>
+        <div class="feedback-content">
+          <div class="feedback-rating">
+  ${[1, 2, 3, 4, 5]
+    .map((i) => {
+      const filled = i <= f.rating;
+      return `<img data-src="../icons/${
+        filled ? 'star-filled' : 'star'
+      }.png" alt="star" class="star-icon lazyload" style="width:21px;height:21px;">`;
+    })
+    .join('')}
+</div>
+
+          <p class="feedback-text">${f.feedback}</p>
         </div>
       </div>
-    `;
+    `
+        )
+        .join('');
+    };
+
+    fetchAndRenderFeedback();
 
     document
       .getElementById('add-to-wishlist')
