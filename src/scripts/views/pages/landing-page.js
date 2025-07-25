@@ -1,12 +1,14 @@
 // eslint-disable-next-line no-unused-vars
 import details from '../../data/details.json';
 import supabase from '../../globals/supabaseClient';
+import 'lazysizes';
+import 'lazysizes/plugins/parent-fit/ls.parent-fit';
 
 const LandingPage = {
   async render() {
     document.body.classList.remove('is-wishlist-page');
     return `
-      <div class="hero-image">
+      <div class="hero-image lazyload">
         <div class="overlay"></div>
         <div class="hero-text">
           <h1 class="judul-landing-page">Buket Murah? Flowry Bouquet Saja!</h1>
@@ -27,7 +29,7 @@ const LandingPage = {
             <p>Pesan Sekarang Juga!</p>
           </div>
           <div class="video-frame">
-            <video autoplay loop muted playsinline>
+            <video class="lazyload" preload="none" data-autoplay="" preload="none" autoplay loop muted playsinline>
               <source src="/video_marketing.mp4" type="video/mp4">
               Browser Anda tidak mendukung video HTML5.
             </video>
@@ -100,7 +102,7 @@ const LandingPage = {
     return `
       <article class="card-wishlist" data-name="${name}" data-variant="${variant}" data-price="${price}" data-image="${image}" data-description="${description}">
         <section>
-          <img class="image-card" src="${image}" alt="${name}" loading="lazy">
+          <img class="image-card lazyload" data-src="${image}" alt="${name}" loading="lazy">
           <article class="container">
             <h4 class="judul-buket"><b>${name}</b></h4> 
             <p class="varian-buket">Varian: ${variant}</p>

@@ -1,4 +1,6 @@
 import supabase from '../../globals/supabaseClient';
+import 'lazysizes';
+import 'lazysizes/plugins/parent-fit/ls.parent-fit';
 
 // Ambil allowedEmails dari environment variable
 const allowedEmails = (process.env.ALLOWED_ADMIN_EMAILS || '')
@@ -83,7 +85,7 @@ const AdminBouquet = {
               <label>Gambar:</label>
               <div class="bouquet-file-preview-row">
                 <input type="file" id="gambar" accept="image/*" class="bouquet-input" style="margin-bottom:0;">
-                <img id="preview-gambar" src="" class="bouquet-preview-gambar" style="display:none;" loading="lazy">
+                <img id="preview-gambar" data-src="" class="bouquet-preview-gambar lazyload" style="display:none;" alt="Preview Gambar">
               </div>
 
               <div style="margin-top: 1rem;">
@@ -192,11 +194,18 @@ const AdminBouquet = {
     };
 
     tambahBtn.addEventListener('click', () => openModal());
-    closeModal.addEventListener('click', () => (modal.style.display = 'none'));
+    closeModal.addEventListener('click', () => {
+      form.reset(); // Reset semua input, termasuk file
+      previewGambar.src = '';
+      previewGambar.style.display = 'none';
+      modal.style.display = 'none';
+    });
 
-    // Close modal when clicking outside modal-content
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
+        form.reset(); // Reset semua input
+        previewGambar.src = '';
+        previewGambar.style.display = 'none';
         modal.style.display = 'none';
       }
     });
@@ -528,9 +537,9 @@ const AdminBouquet = {
               <td>${item.flower}</td>
               <td>
                 <div class="bouquet-img-center">
-                  <img src="${imageUrl}" loading="lazy" alt="${
+                  <img data-src="${imageUrl}" loading="lazy" alt="${
             item.flower
-          }" class="bouquet-table-img" />
+          }" class="bouquet-table-img lazyload" />
                 </div>
               </td>
               <td>${item.varian}</td>

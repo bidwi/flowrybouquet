@@ -1,4 +1,6 @@
 import supabase from '../../globals/supabaseClient';
+import 'lazysizes';
+import 'lazysizes/plugins/parent-fit/ls.parent-fit';
 
 const Wishlist = {
   async render() {
@@ -90,7 +92,7 @@ const Wishlist = {
           (item, index) => `
         <article class="card-wishlist" data-index="${index}" data-name="${item.name}">
           <section>
-            <img class="image-card" loading="lazy" src="${item.image}" alt="${item.name}">
+            <img class="image-card lazyload" data-src="${item.image}" alt="${item.name}">
             <div class="container">
               <h4><b>${item.name}</b></h4>
               <p>Varian: ${item.variant}</p>

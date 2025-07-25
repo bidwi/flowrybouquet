@@ -1,4 +1,6 @@
 import supabase from '../../globals/supabaseClient';
+import 'lazysizes';
+import 'lazysizes/plugins/parent-fit/ls.parent-fit';
 
 // Ambil allowedEmails dari environment variable
 const allowedEmails = (process.env.ALLOWED_ADMIN_EMAILS || '')
@@ -212,7 +214,7 @@ const AdminFeedback = {
                 <div class="admin-feedback-img-center">
                   ${
                     imageUrl
-                      ? `<img src="${imageUrl}" loading="lazy" alt="feedback-img" class="admin-feedback-table-img" />`
+                      ? `<img data-src="${imageUrl}" alt="feedback-img" class="admin-feedback-table-img lazyload" />`
                       : '-'
                   }
                 </div>

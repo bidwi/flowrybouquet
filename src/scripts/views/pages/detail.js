@@ -1,5 +1,7 @@
 import details from '../../data/details.json';
 import supabase from '../../globals/supabaseClient';
+import 'lazysizes';
+import 'lazysizes/plugins/parent-fit/ls.parent-fit';
 
 const Detail = {
   async render() {
@@ -79,7 +81,7 @@ const Detail = {
     const detailContainer = document.getElementById('detail-container');
     detailContainer.innerHTML = `
       <div class="detail-content">
-        <img class="detail-image" loading="lazy" src="${item.image}" alt="${item.name}">
+        <img class="detail-image lazyload" data-src="${item.image}" alt="${item.name}">
         <div class="detail-info">
           <h1>${item.name}</h1>
           <h2>${item.variant}</h2>

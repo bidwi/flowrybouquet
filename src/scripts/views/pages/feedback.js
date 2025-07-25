@@ -1,4 +1,6 @@
 import supabase from '../../globals/supabaseClient';
+import 'lazysizes';
+import 'lazysizes/plugins/parent-fit/ls.parent-fit';
 
 const FeedbackPage = {
   async render() {
@@ -79,7 +81,7 @@ const FeedbackPage = {
             ${[1, 2, 3, 4, 5]
               .map(
                 (i) =>
-                  `<img src="../icons/star.png" loading="lazy" data-rate="${i}" class="star-icon" alt="star" />`
+                  `<img data-src="../icons/star.png" data-rate="${i}" class="star-icon lazyload" alt="star" />`
               )
               .join('')}
           </div>
@@ -90,7 +92,7 @@ const FeedbackPage = {
 
           <label for="gambar">Gambar (Maksimal 4MB) <span style="color:red">*</span></label>
           <input type="file" id="gambar" name="gambar" accept="image/*" required />
-          <img id="preview-gambar" loading="lazy" style="max-width:120px;display:none;margin:8px 0;" />
+          <img id="preview-gambar" data-src="" class="lazyload" style="max-width:120px;display:none;margin:8px 0;" alt="Preview Gambar" />
 
           <div id="feedback-loading" style="display:none;color:blue;margin-top:0.5rem;">Tunggu sebentar..</div>
           <div id="feedback-success" style="display:none;color:green;margin-top:1rem;">Feedback berhasil dikirim!</div>
