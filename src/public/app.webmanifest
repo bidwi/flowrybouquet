@@ -1,0 +1,104 @@
+{
+  "id": "flowry-bouquet",
+  "start_url": "./index.html",
+  "name": "Flowry Bouquet",
+  "short_name": "Flowry",
+  "description": "Buket Spesial untuk Orang yang Paling Spesial!",
+  "display": "standalone",
+  "background_color": "#fff1cc4d",
+  "theme_color": "#FF0000",
+  "icons": [
+    {
+      "src": "/icons/icon72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-square-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/bouquet/polaroid.jpg",
+      "sizes": "800x533",
+      "type": "image/gif",
+      "form_factor": "wide",
+      "label": "Application"
+    },
+    {
+      "src": "/bouquet/uang.jpg",
+      "sizes": "800x533",
+      "type": "image/gif",
+      "form_factor": "wide",
+      "label": "Application"
+    },
+    {
+      "src": "/bouquet/bunga.jpg",
+      "sizes": "800x533",
+      "type": "image/gif",
+      "form_factor": "wide",
+      "label": "Application"
+    },
+    {
+      "src": "/bouquet/uang.jpg",
+      "sizes": "800x533",
+      "type": "image/gif",
+      "form_factor": "narrow",
+      "label": "Mobile"
+    },
+    {
+      "src": "/bouquet/polaroid.jpg",
+      "sizes": "800x533",
+      "type": "image/gif",
+      "form_factor": "narrow",
+      "label": "Mobile"
+    },
+    {
+      "src": "/bouquet/bunga.jpg",
+      "sizes": "800x533",
+      "type": "image/gif",
+      "form_factor": "narrow",
+      "label": "Mobile"
+    }
+  ]
+}
