@@ -88,9 +88,18 @@ const Detail = {
       <h3>${item.price}</h3>
       <p>${item.description}</p>
       <div class="detail-buttons">
-        <button id="buy-via-instagram" class="buy-instagram">Beli di IG</button>
-        <button id="buy-via-whatsapp" class="buy-whatsapp">Beli di WA</button>
-        <button id="buy-via-facebook" class="buy-facebook">Beli di FB</button>
+        <button id="buy-via-instagram" class="buy-instagram">
+          <img src="../../icons/instagram-brands-solid-full.svg" alt="Instagram" class="icons-detail">
+        </button>
+        <button id="buy-via-whatsapp" class="buy-whatsapp">
+          <img src="../../icons/whatsapp-brands-solid-full.svg" alt="WhatsApp" class="icons-detail">
+        </button>
+        <button id="buy-via-facebook" class="buy-facebook">
+          <img src="../../icons/facebook-brands-solid-full.svg" alt="Facebook" class="icons-detail">
+        </button>
+        <button id="buy-via-tiktok" class="buy-tiktok">
+          <img src="../../icons/tiktok-brands-solid-full.svg" alt="TikTok" class="icons-detail">
+        </button>
         <button id="add-to-wishlist" class="wishlist-button">Wishlist</button>
         <button id="feedback-btn" class="feedback-button">Feedback</button>
       </div>
@@ -131,7 +140,7 @@ const Detail = {
       }
       if (!feedbacks || feedbacks.length === 0) {
         container.innerHTML =
-          '<p class="no-feedback">Belum ada feedback, silakan berikan feedback pertama Anda!</p>';
+          '<p class="no-feedback">Belum ada feedback. Silakan tambah <a href="#/feedback" style="color: #888">feedback</a>.</p>';
         return;
       }
 
@@ -193,6 +202,10 @@ const Detail = {
       .getElementById('buy-via-instagram')
       .addEventListener('click', () => this.buyViaInstagram(item));
 
+    document
+      .getElementById('buy-via-tiktok')
+      .addEventListener('click', () => this.buyViaTikTok(item));
+
     document.getElementById('feedback-btn').addEventListener('click', () => {
       localStorage.setItem(
         'feedback_autofill',
@@ -231,6 +244,13 @@ const Detail = {
     const instagramURL = `https://ig.me/m/${instagramUsername}`;
 
     window.open(instagramURL);
+  },
+
+  buyViaTikTok() {
+    const tiktokUsername = 'flowry.bouquet'; // Ganti dengan username TikTok tujuan
+    const tiktokURL = `https://www.tiktok.com/@${tiktokUsername}`;
+
+    window.open(tiktokURL);
   },
 
   buyViaFacebook() {

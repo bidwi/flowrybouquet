@@ -169,7 +169,7 @@ const AdminBouquet = {
 
         // Coba download gambar dan preview (jika ada)
         const filePath = getFileName(editData.flower, editData.varian);
-        // eslint-disable-next-line no-unused-vars
+
         const { data: blob, error: downloadError } = await supabase.storage
           .from(bucketName)
           .download(filePath);
@@ -527,7 +527,7 @@ const AdminBouquet = {
             deskripsi =
               deskripsi.slice(0, 30) +
               `... <span class="see-more" data-idx="${idx}">see more</span>`;
-            // eslint-disable-next-line no-unused-vars
+
             showSeeMore = true;
           }
 
@@ -616,7 +616,6 @@ const AdminBouquet = {
 
       // See more event
       document.querySelectorAll('.see-more').forEach((el) => {
-        // eslint-disable-next-line no-unused-vars
         el.addEventListener('click', (e) => {
           const idx = el.getAttribute('data-idx');
           const span = document.querySelector(

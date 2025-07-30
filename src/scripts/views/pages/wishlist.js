@@ -44,9 +44,9 @@ const Wishlist = {
     // Cek ke Supabase untuk validasi item masih ada
     if (wishlist.length > 0) {
       // Ambil semua nama dan varian unik
-      // eslint-disable-next-line no-unused-vars
+
       const names = wishlist.map((item) => item.name);
-      // eslint-disable-next-line no-unused-vars
+
       const variants = wishlist.map((item) => item.variant);
 
       // Query semua data yang ada di wishlist

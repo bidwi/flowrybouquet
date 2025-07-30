@@ -43,7 +43,6 @@ const FeedbackPage = {
     if (hash[1] === 'detail' && hash[2]) {
       const itemName = decodeURIComponent(hash[2]);
       if (itemName.includes('--')) {
-        // eslint-disable-next-line no-unused-vars
         [autofillName, autofillVarian] = itemName.split('--');
       }
     }
@@ -68,8 +67,6 @@ const FeedbackPage = {
           <button id="logout-btn" class="bouquet-logout-btn feedback-logout-btn" style="margin-top:-10px">Logout</button>
         </div>
         <form id="feedback-form" class="feedback-form" enctype="multipart/form-data" autocomplete="off">
-        <label for="email">Email Anda <span style="color:red">*</span></label>
-        <input type="text" id="email" name="email" value="${userEmail}" readonly required />
           <label for="nama-buket">Nama Buket <span style="color:red">*</span></label>
           <select id="nama-buket" name="nama-buket" required ${
             autofillName ? 'disabled' : ''
@@ -92,7 +89,7 @@ const FeedbackPage = {
           <input type="hidden" id="rating" name="rating" required />
 
           <label for="feedback">Deskripsi <span style="color:red">*</span></label>
-          <textarea id="feedback" name="feedback" required placeholder="Tulis feedback Anda..."></textarea>
+          <textarea id="feedback" name="feedback" maxlength="256" required placeholder="Tulis feedback Anda..."></textarea>
 
           <label for="gambar">Gambar (Maksimal 4MB) <span style="color:red">*</span></label>
           <input type="file" id="gambar" name="gambar" accept="image/*" required />
@@ -175,7 +172,6 @@ const FeedbackPage = {
       renderVarianInput(autofillName);
       namaBuket.disabled = true;
     } else if (namaBuket) {
-      // eslint-disable-next-line prefer-arrow-callback
       namaBuket.addEventListener('change', function () {
         selectedFlower = namaBuket.value;
         renderVarianInput(selectedFlower);
@@ -183,7 +179,6 @@ const FeedbackPage = {
         // Jika dropdown, listen perubahan varian
         const varianSelect = document.getElementById('varian-buket');
         if (varianSelect && varianSelect.tagName === 'SELECT') {
-          // eslint-disable-next-line prefer-arrow-callback
           varianSelect.addEventListener('change', function () {
             selectedVarian = varianSelect.value;
             selectedIdFlowry =
@@ -204,7 +199,6 @@ const FeedbackPage = {
         (v) => v.varian === autofillVarian
       );
       if (match) {
-        // eslint-disable-next-line no-unused-vars
         selectedVarian = match.varian;
         selectedIdFlowry = match.id;
       }
@@ -272,8 +266,6 @@ const FeedbackPage = {
         const varianVal = varianInput ? varianInput.value : '';
         const ratingVal = ratingInput.value;
         const feedbackVal = document.getElementById('feedback').value.trim();
-        const emailInput = document.getElementById('email');
-        const emailVal = emailInput ? emailInput.value : '';
         const feedbackLoading = document.getElementById('feedback-loading');
         if (feedbackLoading) feedbackLoading.style.display = 'block';
 
@@ -347,7 +339,6 @@ const FeedbackPage = {
               id_flowry: id_flowry,
               rating: Number(ratingVal),
               feedback: feedbackVal,
-              email: emailVal,
             },
           ])
           .select('id_feedback');

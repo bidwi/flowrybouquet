@@ -14,6 +14,8 @@ export default [
       camelcase: 'off',
       'no-useless-escape': 'off',
       'no-undef': 'off',
+      'prefer-arrow-callback': 'off',
+      'no-unused-vars': 'off',
       'prefer-const': 'off',
       'prefer-template': 'off',
     },

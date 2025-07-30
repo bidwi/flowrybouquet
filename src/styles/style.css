@@ -546,12 +546,20 @@ body {
   margin-top: 20px;
 }
 
+.icons-detail {
+  width: 28px;
+  height: 28px;
+  filter: brightness(0) saturate(100%) invert(88%) sepia(100%) saturate(2%)
+    hue-rotate(299deg) brightness(110%) contrast(101%);
+}
+
 .wishlist-button,
 .buy-whatsapp,
 .buy-instagram,
 .buy-facebook,
+.buy-tiktok,
 .feedback-button {
-  padding: 10px 16px;
+  padding: 8px 12px 4px 12px;
   font-size: 16px;
   border: none;
   border-radius: 8px;
@@ -562,6 +570,7 @@ body {
 
 .feedback-button {
   background-color: #4d869c;
+  padding-bottom: 8px;
 }
 .feedback-button:hover {
   background-color: #37647a;
@@ -597,6 +606,14 @@ body {
 
 .buy-instagram:hover {
   background-color: #a2296f; /* Ungu lebih gelap */
+}
+
+.buy-tiktok {
+  background-color: #000000; /* Biru khas TikTok */
+}
+
+.buy-tiktok:hover {
+  background-color: #383838; /* Biru lebih gelap */
 }
 
 .wishlist-button {

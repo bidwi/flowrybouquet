@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import details from '../../data/details.json';
 import supabase from '../../globals/supabaseClient';
 import 'lazysizes';
