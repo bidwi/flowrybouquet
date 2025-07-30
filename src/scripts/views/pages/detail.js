@@ -38,38 +38,24 @@ const Detail = {
         .replace(/\s+/g, '-')
         .toLowerCase()}?t=${Date.now()}`;
 
-    // Jika tidak ditemukan di details.json, cari di Supabase
-    if (!item) {
-      // Query ke Supabase
-      let query = supabase.from('flowry').select('*').eq('flower', itemName);
-      if (itemVariant) query = query.eq('varian', itemVariant);
-      const { data, error } = await query.single();
+    // Selalu ambil data terbaru dari Supabase jika ada
+    let query = supabase.from('flowry').select('*').eq('flower', itemName);
+    if (itemVariant) query = query.eq('varian', itemVariant);
+    const { data: supaData, error } = await query.single();
 
-      if (!error && data) {
-        // Format harga dan gambar
-        const formatRupiah = (angka) => 'Rp' + angka.toLocaleString('id-ID');
-        item = {
-          name: data.flower,
-          variant: data.varian,
-          price: formatRupiah(data.harga),
-          image: getImageUrl(data.flower, data.varian),
-          description: data.deskripsi,
-        };
-      }
-    } else {
-      // Jika ditemukan di details.json, cek juga ke Supabase
-      let query = supabase
-        .from('flowry')
-        .select('flower, varian')
-        .eq('flower', item.name)
-        .eq('varian', item.variant);
-      const { data: bouquetData } = await query.single();
-
-      if (!bouquetData) {
-        item = null;
-      } else {
-        item.image = getImageUrl(item.name, item.variant);
-      }
+    if (!error && supaData) {
+      // Format harga dan gambar
+      const formatRupiah = (angka) => 'Rp' + angka.toLocaleString('id-ID');
+      item = {
+        name: supaData.flower,
+        variant: supaData.varian,
+        price: formatRupiah(supaData.harga),
+        image: getImageUrl(supaData.flower, supaData.varian),
+        description: supaData.deskripsi,
+      };
+    } else if (item) {
+      // fallback ke details.json jika Supabase tidak ada
+      item.image = getImageUrl(item.name, item.variant);
     }
 
     if (!item) {
@@ -121,7 +107,7 @@ const Detail = {
 
       const { data: feedbacks } = await supabase
         .from('feedback')
-        .select('id_feedback, feedback, rating, email')
+        .select('id_feedback, feedback, rating')
         .eq('id_flowry', bouquetData.id);
 
       const { data: files } = await supabase.storage
