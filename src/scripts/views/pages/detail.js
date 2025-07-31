@@ -233,7 +233,7 @@ const Detail = {
   },
 
   buyViaTikTok() {
-    const tiktokUsername = 'flowry.bouquet'; // Ganti dengan username TikTok tujuan
+    const tiktokUsername = 'fbouquettt'; // Ganti dengan username TikTok tujuan
     const tiktokURL = `https://www.tiktok.com/@${tiktokUsername}`;
 
     window.open(tiktokURL);
